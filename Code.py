@@ -1,5 +1,5 @@
 import pandas as pd
-
+"""
 # Créer une liste avec les humeurs positives
 humeurs_positives = ["heureux", "enthousiaste", "épanoui", "optimiste", "serein"]
 
@@ -13,3 +13,8 @@ df = pd.DataFrame({
 })
 
 print(df)
+"""
+
+# Retour attendu machine learning :
+dic={"content":["P",2],"desastre":["N",2]}
+
