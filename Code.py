@@ -12,5 +12,4 @@ df = pd.DataFrame({
     "Sentiment": ["Positive"] * len(humeurs_positives) + ["Negative"] * len(humeurs_negatives)
 })
 
-# Afficher le DataFrame
 print(df)
