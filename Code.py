@@ -62,7 +62,7 @@ def segmenter_phrases(commentaire):
 def detecter_mot(mot):
     sujet_aborde = ["site", "internet", "personnel", "livraison", "marque", "delai", "esthetique",
                     "collection", "materiel", "prix", "etablissement", "matiere", "taille", "politesse", "cashback",
-                    "produit", "commande", "service", "client", "vetement","qualite"]
+                    "produit", "commande", "service", "client", "vetement","qualite","regler","renvoi","image"]
 
     for mot_test in sujet_aborde:
         distance = Levenshtein.distance(mot_test,mot)
@@ -73,11 +73,13 @@ def detecter_mot(mot):
 
 #si même phrase d'un sujet avant alors même sujet pour cette émotion
 def verif_avant(com,df):
-    avant=df.iloc[-1]
-    if avant["Sujet"] in com:
-        return avant["Sujet"]
-    return "GENERAL"
-
+    if len(df)!=0:
+        avant=df.iloc[-1]
+        if avant["Sujet"] in com:
+            return avant["Sujet"]
+        return "GENERAL"
+    else :
+        return "GENERAL"
 # associe à chaque emotion le sujet
 def trouve_sujet(dic,com,df):
 
@@ -126,22 +128,28 @@ def enleverpetitmot(phrase):
 # Fonction qui sera remplacer par celle de momo et matthieu quand elle marchera
 def it(i):
     if i==1:
-        return {"incroyable": ["P", 3]}
-        #return {"meilleur": ["N", 3]}
+        #return {"incroyable": ["P", 3]} #1
+        #return {"meilleur": ["N", 3]} #2
+        return {"surprise":['P',0],"negatives": ["N", 3]} #3
     if i==2:
-        return {"adorables": ["P", 4], "grande": ["P", 6]}
-        #return {"bien": ["P", 2],"rapide":["P",6]}
+        #return {"adorables": ["P", 4], "grande": ["P", 6]} #1
+        #return {"bien": ["P", 2],"rapide":["P",6]} #2
+        return {"probleme": ["N", 7], "rapidement": ["P", 13]} #3
     if i==3:
-        return {"variées": ["P", 3]}
-        #return {"long": ["N", 1], "dramatique": ["P", 4]}
+        #return {"variées": ["P", 3]} #1
+        #return {"long": ["N", 1], "dramatique": ["P", 4]} #2
+        return {"facile": ["P", 1]} #3
     if i==4:
-        return {"rapide":["P",1],"excellent":["P", 5]}
+        #return {"rapide":["P",1],"excellent":["P", 5]} #1
+        return {"catastrophique": ["N", 7]} #3
     if i==5:
-        return {"stylés":["P",8],"abordable":["P",10]}
+        #return {"stylés":["P",8],"abordable":["P",10]} #1
+        return {"gache": ["N", 9]} #3
 
 # Programme principal
-com = "Shein est une marque en ligne incroyable ! Leur vetements à la mode sont adorables et de grande qualité. Leurs collections sont variées et suivent les dernières tendances. La livraison est rapide et leur service client est excellent. Je recommande vivement Shein pour tous ceux qui recherchent des vêtement stylés à des prix abordables !"
+#com = "Shein est une marque en ligne incroyable ! Leur vetements à la mode sont adorables et de grande qualité. Leurs collections sont variées et suivent les dernières tendances. La livraison est rapide et leur service client est excellent. Je recommande vivement Shein pour tous ceux qui recherchent des vêtement stylés à des prix abordables !"
 #com="La qualité n'est pas la meilleure, mais c'est normal à ce prix, on ne peut pas tout avoir. Les livraisons sont bien suivies et de plus en plus rapide. Cashback un peu long, mais rien de dramatique."
+com="Surprise par tant de notes négatives. Cliente depuis des années d'Amazon il m'est arrivé d'avoir des problèmes sur une commande mais elle a toujours été réglée rapidement.Renvoi facile et remboursement dans la semaine.Seul bémol, leurs quelques envois effectués par UPS qui est une entreprise catastrophique. Si j'avais une remarque à faire à Amazon serait de ne jamais travailler avec ce transporteur qui gâche leur image."
 phrases_separees = segmenter_phrases(com)
 
 df = pd.DataFrame({
