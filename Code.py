@@ -1,5 +1,7 @@
 import pandas as pd
-
+import re
+import unidecode
+import Levenshtein
 """
 #%% PARTIE MOMO
 
@@ -41,6 +43,8 @@ df
 """
 
 #%% PARTIE ANALYSE SUJET
+
+# separer le commentaire complet par chaque phrase
 def segmenter_phrases(commentaire):
     marqueurs = ['.', '!', '?']  # Liste des marqueurs de ponctuation
     phrases = []
@@ -54,11 +58,28 @@ def segmenter_phrases(commentaire):
         phrases.append(phrase.strip())  # Ajouter la dernière phrase si elle existe
     return phrases
 
+# regarder si le mot dans la liste à 2 lettres d'erreur considèrer comme identitique
+def detecter_mot(mot):
+    sujet_aborde = ["site", "internet", "personnel", "livraison", "marque", "delai", "esthetique",
+                    "collection", "materiel", "prix", "etablissement", "matiere", "taille", "politesse", "cashback",
+                    "produit", "commande", "service", "client", "vetement","qualite"]
+
+    for mot_test in sujet_aborde:
+        distance = Levenshtein.distance(mot_test,mot)
+        if distance <= 2:  # La distance maximale autorisée
+            return True
+
+    return False
+
+#si même phrase d'un sujet avant alors même sujet pour cette émotion
+def verif_avant(com,df):
+    avant=df.iloc[-1]
+    if avant["Sujet"] in com:
+        return avant["Sujet"]
+    return "GENERAL"
+
+# associe à chaque emotion le sujet
 def trouve_sujet(dic,com,df):
-
-    sujet_aborde = ["site", "internet","personnel", "livraison","livraisons", "marque","délai", "esthétique","collections", "materiel","prix","établissement","matière","taille","politesse","cashback","produit","commande","service", "client","vêtements","vêtement","qualité"]
-
-    com = com.lower()
 
     com_mot = com.split()
 
@@ -76,10 +97,13 @@ def trouve_sujet(dic,com,df):
 
         emo = ""
         for i in range(debut, fin):
-            if com_mot[i] in sujet_aborde:
+            if detecter_mot(com_mot[i]) :
                 emo = emo + " " + com_mot[i]
+
         if len(emo)==0:
-            emo="GÉNÉRAL"
+
+            emo=verif_avant(com, df) # si n'a pas trouver le sujet
+
         new_row = pd.DataFrame({
             "Emotion": [key],
             "Sujet": [emo],
@@ -90,8 +114,34 @@ def trouve_sujet(dic,com,df):
 
     return df
 
-com = "Shein est une marque en ligne incroyable ! Leur vetements à la mode sont adorables et de grande qualité. Leurs collections sont variées et suivent les dernières tendances. La livraison est rapide et leur service client est excellent. Je recommande vivement Shein pour tous ceux qui recherchent des vêtement stylés à des prix abordables !"
+#Permet de simplifier les phrases
+def enleverpetitmot(phrase):
+    words=phrase.split()
+    phrase_simple=""
+    for word in words:
+        if len(word)>3 or word=="pas":
+            phrase_simple=phrase_simple+" "+word
+    return phrase_simple
 
+# Fonction qui sera remplacer par celle de momo et matthieu quand elle marchera
+def it(i):
+    if i==1:
+        return {"incroyable": ["P", 3]}
+        #return {"meilleur": ["N", 3]}
+    if i==2:
+        return {"adorables": ["P", 4], "grande": ["P", 6]}
+        #return {"bien": ["P", 2],"rapide":["P",6]}
+    if i==3:
+        return {"variées": ["P", 3]}
+        #return {"long": ["N", 1], "dramatique": ["P", 4]}
+    if i==4:
+        return {"rapide":["P",1],"excellent":["P", 5]}
+    if i==5:
+        return {"stylés":["P",8],"abordable":["P",10]}
+
+# Programme principal
+com = "Shein est une marque en ligne incroyable ! Leur vetements à la mode sont adorables et de grande qualité. Leurs collections sont variées et suivent les dernières tendances. La livraison est rapide et leur service client est excellent. Je recommande vivement Shein pour tous ceux qui recherchent des vêtement stylés à des prix abordables !"
+#com="La qualité n'est pas la meilleure, mais c'est normal à ce prix, on ne peut pas tout avoir. Les livraisons sont bien suivies et de plus en plus rapide. Cashback un peu long, mais rien de dramatique."
 phrases_separees = segmenter_phrases(com)
 
 df = pd.DataFrame({
@@ -99,25 +149,21 @@ df = pd.DataFrame({
         "Sujet": [],
         "P/N": []
     })
-def it(i):
-    if i==1:
-        return {"incroyable": ["P", 6]}
-    if i==2:
-        return {"adorables": ["P", 6], "qualité": ["P", 10]}
-    if i==3:
-        return {"variées": ["P", 3]}
-    if i==4:
-        return {"rapide":["P",3],"excellent":["P", 9]}
-    if i==5:
-        return {"stylé":["P",8],"abordable":["P",12]}
 
 i=1
 for phrase in phrases_separees:
-    dic=it(i)
-    df=trouve_sujet(dic, phrase, df)
 
-    i+=1
-print(df)
+    #Permet de simplifier le message pour annalyse
+    phrase = enleverpetitmot(phrase)
+    texte_sans_accents = unidecode.unidecode(phrase)
+    phrase=texte_sans_accents.lower()
+    print(phrase)
+
+    dic=it(i) # fonction momo matthieu
+    df=trouve_sujet(dic, phrase, df) # trouver le sujet
+
+    i+=1 # à enelever plus tard
+print(df) # resultat pour un commentaire
 
 
 
