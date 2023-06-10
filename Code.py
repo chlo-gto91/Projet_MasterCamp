@@ -85,12 +85,12 @@ def trouve_sujet(dic,com,df):
 
     for key in dic.keys():
         pos = dic[key][1]
-        debut = pos - 4
+        debut = pos - 3
 
         if debut < 0:
             debut = 0
 
-        fin = pos + 4
+        fin = pos +2
 
         if fin > len(com_mot):
             fin = len(com_mot)
@@ -119,7 +119,7 @@ def enleverpetitmot(phrase):
     words=phrase.split()
     phrase_simple=""
     for word in words:
-        if len(word)>3 or word=="pas":
+        if len(word)>3 or word=="pas" or word=="peu":
             phrase_simple=phrase_simple+" "+word
     return phrase_simple
 
@@ -151,6 +151,7 @@ df = pd.DataFrame({
     })
 
 i=1
+
 for phrase in phrases_separees:
 
     #Permet de simplifier le message pour annalyse
