@@ -189,6 +189,7 @@ print(df) # resultat pour un commentaire
 #df2=df
 #df3=df
 
+"""
 #%%affichage du df complet
 dfinal=pd.concat([df1,df2,df3])
 
@@ -219,7 +220,7 @@ emo_freqN = compt_emoN.idxmax()
 # Afficher l'émotion la plus fréquente dans les positifs puis négatifs
 print("Le sujet positif le plus fréquent est :", emo_freqP)
 print("Le sujet négatif le plus fréquent est :", emo_freqN)
-
+"""
 
 
 
