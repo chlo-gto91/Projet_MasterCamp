@@ -5,6 +5,13 @@ import Levenshtein
 import string
 
 #####################################
+##### PARTIE IMPORTER COMMENTAIRE####
+####################################
+
+# a mettre ici
+
+
+#####################################
 ##### PARTIE ANALYSE PHRASE #########
 ####################################
 
@@ -209,6 +216,7 @@ for phrase in phrases_separees:
 print(df) # resultat pour un commentaire
 
 #------A DECOMMENTER UNE FOIS BOUCLE COM PAR COM FAIT ------
+
 #assembler dans un data frame final
 #dfinal=pd.concat([dfinal,df])
 
