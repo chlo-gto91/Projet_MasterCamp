@@ -2,7 +2,7 @@ import pandas as pd
 import re
 import unidecode
 import Levenshtein
-
+import string
 """
 #%% PARTIE MOMO
 
@@ -147,26 +147,35 @@ def it(i):
         #return {"stylés":["P",8],"abordable":["P",10]} #1
         return {"gache": ["N", 9]} #3
 
+def detecter_pos(mot, positif_df, negatif_df):
 
-def chercheemotion(com,positif_df,negatif_df):
+    for mot_test in positif_df:
+        distance = Levenshtein.distance(mot_test,mot)
+        if distance <= 2:  # La distance maximale autorisée
+            return True
 
-    dic={}
+    return False
+def chercheemotion(com, positif_df, negatif_df):
+    dic = {}
     com_mot = com.split()
-    for i in range (len(com_mot)):
-        print(com_mot[i])
-        if com_mot[i] in positif_df:
-            dic[com_mot[i]]=["P",i]
-        if com_mot[i] in negatif_df:
-            dic[com_mot[i]]=["N",i]
-    #print(dic)
+    for i in range(len(com_mot)):
+        if com_mot[i] in positif_df.values:
+            dic[com_mot[i]] = ["P", i]
+        if com_mot[i] in negatif_df.values:
+            dic[com_mot[i]] = ["N", i]
+    print(dic)
     return dic
 
 
+def enlever_ponctuation(phrase):
+    ponctuation = string.punctuation
+    phrase_sans_ponctuation = "".join(caractere for caractere in phrase if caractere not in ponctuation)
+    return phrase_sans_ponctuation
 
 # Programme principal
-#com = "Shein est une marque en ligne incroyable ! Leur vetements à la mode sont adorables et de grande qualité. Leurs collections sont variées et suivent les dernières tendances. La livraison est rapide et leur service client est excellent. Je recommande vivement Shein pour tous ceux qui recherchent des vêtement stylés à des prix abordables !"
+com = "Shein est une marque en ligne incroyable ! Leur vetements à la mode sont adorables et de grande qualité. Leurs collections sont variées et suivent les dernières tendances. La livraison est rapide et leur service client est excellent. Je recommande vivement Shein pour tous ceux qui recherchent des vêtement stylés à des prix abordables !"
 #com="La qualité n'est pas la meilleure, mais c'est normal à ce prix, on ne peut pas tout avoir. Les livraisons sont bien suivies et de plus en plus rapide. Cashback un peu long, mais rien de dramatique."
-com="Surprise par tant de notes négatives. Cliente depuis des années d'Amazon il m'est arrivé d'avoir des problèmes sur une commande mais elle a toujours été réglée rapidement.Renvoi facile et remboursement dans la semaine.Seul bémol, leurs quelques envois effectués par UPS qui est une entreprise catastrophique. Si j'avais une remarque à faire à Amazon serait de ne jamais travailler avec ce transporteur qui gâche leur image."
+#com="Surprise par tant de notes négatives. Cliente depuis des années d'Amazon il m'est arrivé d'avoir des problèmes sur une commande mais elle a toujours été réglée rapidement.Renvoi facile et remboursement dans la semaine.Seul bémol, leurs quelques envois effectués par UPS qui est une entreprise catastrophique. Si j'avais une remarque à faire à Amazon serait de ne jamais travailler avec ce transporteur qui gâche leur image."
 phrases_separees = segmenter_phrases(com)
 
 df = pd.DataFrame({
@@ -184,10 +193,8 @@ dfinal= pd.DataFrame({
 
 positif_df = pd.read_csv("positif_df.csv")
 positif_df=pd.DataFrame(positif_df)
-print(positif_df)
 negatif_df = pd.read_csv("negatif_df.csv")
 negatif_df=pd.DataFrame(negatif_df)
-print(negatif_df)
 
 # faire for pour parcourir tout les com du csv recuperer par url dans le site
 for phrase in phrases_separees:
@@ -195,7 +202,8 @@ for phrase in phrases_separees:
     #Permet de simplifier le message pour annalyse
     phrase = enleverpetitmot(phrase)
     texte_sans_accents = unidecode.unidecode(phrase)
-    phrase=texte_sans_accents.lower()
+    phrase_sans_ponctuation=enlever_ponctuation(phrase)
+    phrase=phrase_sans_ponctuation.lower()
     print(phrase)
 
 
