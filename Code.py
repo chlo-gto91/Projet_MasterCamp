@@ -59,12 +59,9 @@ def segmenter_phrases(commentaire):
     return phrases
 
 # regarder si le mot dans la liste à 2 lettres d'erreur considèrer comme identitique
-def detecter_mot(mot):
-    sujet_aborde = ["site", "internet", "personnel", "livraison", "marque", "delai", "esthetique",
-                    "collection", "materiel", "prix", "etablissement", "matiere", "taille", "politesse", "cashback",
-                    "produit", "commande", "service", "client", "vetement","qualite","regler","renvoi","image"]
+def detecter_mot(mot,df):
 
-    for mot_test in sujet_aborde:
+    for mot_test in df:
         distance = Levenshtein.distance(mot_test,mot)
         if distance <= 2:  # La distance maximale autorisée
             return True
@@ -84,6 +81,9 @@ def verif_avant(com,df):
 def trouve_sujet(dic,com,df):
 
     com_mot = com.split()
+    sujet_aborde = ["site", "internet", "personnel", "livraison", "marque", "delai", "esthetique",
+                    "collection", "materiel", "prix", "etablissement", "matiere", "taille", "politesse", "cashback",
+                    "produit", "commande", "service", "client", "vetement", "qualite", "regler", "renvoi", "image"]
 
     for key in dic.keys():
         pos = dic[key][1]
@@ -99,7 +99,7 @@ def trouve_sujet(dic,com,df):
 
         emo = ""
         for i in range(debut, fin):
-            if detecter_mot(com_mot[i]) :
+            if detecter_mot(com_mot[i],sujet_aborde):
                 emo = emo + " " + com_mot[i]
 
         if len(emo)==0:
@@ -146,6 +146,22 @@ def it(i):
         return {"stylés":["P",8],"abordable":["P",10]} #1
         #return {"gache": ["N", 9]} #3
 
+
+def chercheemotion(com,positif_df,negatif_df):
+
+    dic={}
+    com_mot = com.split()
+    for i in range (len(com_mot)):
+        print(com_mot[i])
+        if com_mot[i] in positif_df:
+            dic[com_mot[i]]=["P",i]
+        if com_mot[i] in negatif_df:
+            dic[com_mot[i]]=["N",i]
+    #print(dic)
+    return dic
+
+
+
 # Programme principal
 #com = "Shein est une marque en ligne incroyable ! Leur vetements à la mode sont adorables et de grande qualité. Leurs collections sont variées et suivent les dernières tendances. La livraison est rapide et leur service client est excellent. Je recommande vivement Shein pour tous ceux qui recherchent des vêtement stylés à des prix abordables !"
 com="La qualité n'est pas la meilleure, mais c'est normal à ce prix, on ne peut pas tout avoir. Les livraisons sont bien suivies et de plus en plus rapide. Cashback un peu long, mais rien de dramatique."
@@ -164,6 +180,14 @@ dfinal= pd.DataFrame({
         "Sujet": [],
         "P/N": [] # changer derniere colonne par coef ou ajouter colonne avec
     })
+
+positif_df = pd.read_csv("positif_df.csv")
+positif_df=pd.DataFrame(positif_df)
+print(positif_df)
+negatif_df = pd.read_csv("negatif_df.csv")
+negatif_df=pd.DataFrame(negatif_df)
+print(negatif_df)
+
 # faire for pour parcourir tout les com du csv recuperer par url dans le site
 for phrase in phrases_separees:
 
@@ -173,7 +197,9 @@ for phrase in phrases_separees:
     phrase=texte_sans_accents.lower()
     print(phrase)
 
-    dic=it(i) # fonction momo matthieu
+
+    dic=chercheemotion(phrase,positif_df,negatif_df)
+    #dic=it(i) # fonction momo matthieu
     df=trouve_sujet(dic, phrase, df) # trouver le sujet
 
     #assembler dans un data frame final
