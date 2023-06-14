@@ -139,11 +139,14 @@ def trouve_sujet(dic,com,df,positif_df, negatif_df,sujet_aborde):
         for i in range(debut, fin):
             if detecter_sujet_ecart_mot(com_mot[i],sujet_aborde):
                 if com_mot[i] not in positif_df.values and com_mot[i] not in negatif_df.values :
-                    emo = emo + " " + com_mot[i]
+                    if com_mot[i]!=key:
+                        emo = emo + " " + com_mot[i]
 
         if len(emo)==0:
 
             emo=verif_avant(com, df) # si n'a pas trouver le sujet
+            if emo=="GENERAL" and pos+1!=len(com_mot):
+                emo=com_mot[pos+1]
 
         new_row = pd.DataFrame({
             "Emotion": [key],
@@ -168,10 +171,11 @@ def trouve_sujet(dic,com,df,positif_df, negatif_df,sujet_aborde):
 
 #Partie momentané en l'attente de boucle
 
-com = "Shein est une marque en ligne incroyable ! Leur vetements à la mode sont adorables et de grande qualité. Leurs collections sont variées et suivent les dernières tendances. La livraison est rapide et leur service client est excellent. Je recommande vivement Shein pour tous ceux qui recherchent des vêtement stylés à des prix abordables !"
+#com = "Shein est une marque en ligne incroyable ! Leur vetements à la mode sont adorables et de grande qualité. Leurs collections sont variées et suivent les dernières tendances. La livraison est rapide et leur service client est excellent. Je recommande vivement Shein pour tous ceux qui recherchent des vêtement stylés à des prix abordables !"
 #com="La qualité n'est pas la meilleure, mais c'est normal à ce prix, on ne peut pas tout avoir. Les livraisons sont bien suivies et de plus en plus rapide. Cashback un peu long, mais rien de dramatique."
 #com="Surprise par tant de notes négatives. Cliente depuis des années d'Amazon il m'est arrivé d'avoir des problèmes sur une commande mais elle a toujours été réglée rapidement.Renvoi facile et remboursement dans la semaine.Seul bémol, leurs quelques envois effectués par UPS qui est une entreprise catastrophique. Si j'avais une remarque à faire à Amazon serait de ne jamais travailler avec ce transporteur qui gâche leur image."
-
+#com="Mes deux chiens adorent quand je mets des friandises et qu ils s'amusent a les chercher. Très solide tapis, bonne qualité, assez grand pour 2 voir 3 chiens. Moi j'ai un Springer spaniel et un Shih Tzu. Je recommande ce tapis"
+com="Très joli tapis de fouille. Mon malinois de 1 an l'a adopté tout de suite.Jolies couleurs et items variés, ce qui permet au chien d'avoir plusieurs jeux à disposition.En revanche il est petit. Mesure 70*47 et non 70*50 comme décrit.Les photos d'illustration sont retouchées et donc trompeuses. Ce n'est pas une pratique recommandable. J'enlève donc 1 étoile pour la déception a l'arrivée du produit qu'on est en droit de penser plus grand."
 
 # Partie qui restera
 
@@ -203,9 +207,10 @@ df = pd.DataFrame({
 for phrase in phrases_separees:
 
     #Permet de simplifier le message pour annalyse
-    phrase = enleverpetitmot(phrase)
+    texte_modifie = phrase.replace("'", " ")
+    phrase = enleverpetitmot(texte_modifie)
     texte_sans_accents = unidecode.unidecode(phrase)
-    phrase_sans_ponctuation=enlever_ponctuation(phrase)
+    phrase_sans_ponctuation=enlever_ponctuation(texte_sans_accents)
     phrase=phrase_sans_ponctuation.lower()
     print(phrase)
 
