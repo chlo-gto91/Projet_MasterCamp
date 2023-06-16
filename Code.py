@@ -233,7 +233,8 @@ sujet_aborde = ["site", "internet", "personnel", "livraison", "marque", "delai",
                     "collection", "materiel", "prix", "etablissement", "matiere", "taille", "politesse", "cashback",
                     "produit", "commande", "service", "client", "vetement", "qualite", "regler", "renvoi", "image", 
                     "roman", "histoire", "tissus", "pads", "utilite", "achat", "design","couleurs","brosse", "utilisation", 
-                    "solide", "solidite", "appareil", "clips", "article", "coutures", "toile", "plastique", "housse", "nettoyage"]
+                    "solide", "solidite", "appareil", "clips", "article", "coutures", "toile", "plastique", "housse", "nettoyage", "poil"]
+
 adverbe=["peu", "pas","mais","sans","dans"]
 liste_com_df=pd.read_csv("reviews.csv")
 liste_com_df=pd.DataFrame(liste_com_df)
@@ -319,29 +320,6 @@ print("Le sujet positif le plus fréquent est :", emo_freqP)
 print("Le sujet négatif le plus fréquent est :", emo_freqN)
 
 
-#trouver les 10% des sujets les plus réccurents
-texte_complet = ' '.join(emo_freqP['Sujet'])
-sujets = texte_complet.split()
-# Comptez la fréquence de chaque sujet
-compteur_sujets = Counter(sujets)
-total_sujets = len(sujets)
-
-# Déterminez le seuil pour les 10 % des sujets les plus fréquents
-seuil = int(total_sujets * 0.1)
-sujets_freq = compteur_sujets.most_common()
-sujets_pos_top10 = sujets_freq[:seuil]
-print(sujets_pos_top10)
-
-
-texte_complet = ' '.join(emo_freqN['Sujet'])
-sujets = texte_complet.split()
-compteur_sujets = Counter(sujets)
-total_sujets = len(sujets)
-seuil = int(total_sujets * 0.1)
-sujets_freq = compteur_sujets.most_common()
-sujets_neg_top10 = sujets_freq[:seuil]
-
-print(sujets_neg_top10)
 
 """
 
