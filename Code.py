@@ -3,6 +3,7 @@ import re
 import unidecode
 import Levenshtein
 import string
+from nltk.stem import SnowballStemmer
 from collections import Counter
 
 #####################################
@@ -172,12 +173,36 @@ def trouve_sujet(dic,com,df,positif_df, negatif_df,sujet_aborde,adverbe):
 #####################################
 ##### PARTIE ANALYSE COM ############
 ####################################
+def split_sujet(df):
+    rows_to_append = []
+
+    for index, row in df.iterrows():
+        sujet = row['Sujet']
+
+        if len(sujet.split()) > 1:
+            mots = sujet.split()
+            emo = row['Emotion']
+
+            for mot in mots:
+                new_row = {'Emotion': emo, 'Sujet': mot,'P/N': row['P/N']}
+                rows_to_append.append(new_row)
+            df=df.drop(index)
+    # Append the new rows to the DataFrame
+    if rows_to_append:
+        new_rows_df = pd.DataFrame(rows_to_append)
+        df = pd.concat([df, new_rows_df], ignore_index=True)
+
+    return df
+
+
 
 def sujet_majeur(df):
     sujets_counts = df['Sujet'].value_counts()
-
+    liste_mots_sans_espaces = [mot.strip() for mot in sujets_counts.index]
+    print(liste_mots_sans_espaces)
+    x=int(len(df)*0.2)
     # Obtenez le sujet qui apparaît le plus fréquemment (le premier élément de la série sujets_counts)
-    sujet_plus_frequent = sujets_counts.index[0:3]
+    sujet_plus_frequent = sujets_counts.index[0:x]
 
     # Affichez le sujet le plus fréquent
     print("Le sujet le plus fréquent est :", sujet_plus_frequent)
@@ -257,7 +282,7 @@ for com in liste_com_df['Review']:
 dfinal=dfinal.reset_index()
 dfinal = dfinal.drop('index', axis=1)
 
-print(dfinal) # résultat de tous les commentaires
+#print(dfinal) # résultat de tous les commentaires
 
 #séparer le dataframe entre P et N 
 
@@ -265,16 +290,22 @@ data_pos = dfinal.loc[dfinal['P/N'] == 'P']
 data_neg = dfinal.loc[dfinal['P/N'] == 'N']
 
 # Afficher les données filtrées
+#print(data_pos)
+#print(data_neg)
+data_pos=split_sujet(data_pos)
 print(data_pos)
-print(data_neg)
-
 sujet_majeur(data_pos)
+data_neg=split_sujet(data_neg)
+print(data_neg)
+sujet_majeur(data_neg)
 
 
 
 
 #--------------------------------APRES : POUR TROUVER LES SUJETS LES PLUS FREQUENTS POUR P ET N-----------------------------------------
+"""
 
+        
 # Compter les occurrences de chaque sujet pour P et N
 compt_emoP = data_pos['Sujet'].value_counts()
 compt_emoN = data_neg['Sujet'].value_counts()
@@ -312,7 +343,7 @@ sujets_neg_top10 = sujets_freq[:seuil]
 
 print(sujets_neg_top10)
 
-
+"""
 
 
 
