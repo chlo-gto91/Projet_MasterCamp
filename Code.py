@@ -3,6 +3,7 @@ import re
 import unidecode
 import Levenshtein
 import string
+from collections import Counter
 
 #####################################
 ##### PARTIE IMPORTER COMMENTAIRE####
@@ -287,9 +288,29 @@ print("Le sujet positif le plus fréquent est :", emo_freqP)
 print("Le sujet négatif le plus fréquent est :", emo_freqN)
 """
 
-## 16 faire trie positif_df et negatif_df
-## 16 faire detecter mot pour chercheemotion
-## 16 faire boucle pour marche avec csv
+"""
+texte_complet = ' '.join(df['colonne_texte'])
+
+# Étape 4: Diviser la chaîne de caractères en mots individuels
+mots = texte_complet.split()
+
+# Étape 5: Compter la fréquence de chaque mot
+compteur_mots = Counter(mots)
+
+# Étape 6: Calculer le nombre total de mots
+total_mots = len(mots)
+
+# Étape 7: Déterminer le seuil pour les 10 % des mots les plus fréquents
+seuil = int(total_mots * 0.1)
+
+# Étape 8: Trier les mots en fonction de leur fréquence
+mots_freq = compteur_mots.most_common()
+
+# Étape 9: Sélectionner les 10 % des mots les plus fréquents
+mots_top10 = mots_freq[:seuil]
+
+print(mots_top10)
+"""
 
 
 
