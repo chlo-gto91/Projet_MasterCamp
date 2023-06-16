@@ -139,13 +139,14 @@ def trouve_sujet(dic,com,df,positif_df, negatif_df,sujet_aborde):
         for i in range(debut, fin):
             if detecter_sujet_ecart_mot(com_mot[i],sujet_aborde):
                 if com_mot[i] not in positif_df.values and com_mot[i] not in negatif_df.values :
-                    if com_mot[i]!=key:
+                    if com_mot[i]!=key and com_mot[i]!="pas" and com_mot[i]!="peu":
                         emo = emo + " " + com_mot[i]
 
         if len(emo)==0:
 
             emo=verif_avant(com, df) # si n'a pas trouver le sujet
-
+            if emo=="GENERAL" and pos+1<len(com_mot):
+                emo=com_mot[pos+1]
         new_row = pd.DataFrame({
             "Emotion": [key],
             "Sujet": [emo],
@@ -167,8 +168,13 @@ def trouve_sujet(dic,com,df,positif_df, negatif_df,sujet_aborde):
 ####################################
 
 def sujet_majeur(df):
-    df_trier=df.groupby(df["Sujet"])
-    print("Trier : ",df_trier)
+    sujets_counts = df['Sujet'].value_counts()
+
+    # Obtenez le sujet qui apparaît le plus fréquemment (le premier élément de la série sujets_counts)
+    sujet_plus_frequent = sujets_counts.index[0:3]
+
+    # Affichez le sujet le plus fréquent
+    print("Le sujet le plus fréquent est :", sujet_plus_frequent)
 
 
 #####################################
