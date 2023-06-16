@@ -267,7 +267,7 @@ sujet_majeur(data_pos)
 
 
 
-"""
+
 #--------------------------------APRES : POUR TROUVER LES SUJETS LES PLUS FREQUENTS POUR P ET N-----------------------------------------
 
 # Compter les occurrences de chaque sujet pour P et N
@@ -281,34 +281,31 @@ emo_freqN = compt_emoN.idxmax()
 # Afficher l'émotion la plus fréquente dans les positifs puis négatifs
 print("Le sujet positif le plus fréquent est :", emo_freqP)
 print("Le sujet négatif le plus fréquent est :", emo_freqN)
-"""
-
-"""
-texte_complet = ' '.join(df['colonne_texte'])
-
-# Étape 4: Diviser la chaîne de caractères en mots individuels
-mots = texte_complet.split()
-
-# Étape 5: Compter la fréquence de chaque mot
-compteur_mots = Counter(mots)
-
-# Étape 6: Calculer le nombre total de mots
-total_mots = len(mots)
-
-# Étape 7: Déterminer le seuil pour les 10 % des mots les plus fréquents
-seuil = int(total_mots * 0.1)
-
-# Étape 8: Trier les mots en fonction de leur fréquence
-mots_freq = compteur_mots.most_common()
-
-# Étape 9: Sélectionner les 10 % des mots les plus fréquents
-mots_top10 = mots_freq[:seuil]
-
-print(mots_top10)
-"""
 
 
+#trouver les 10% des sujets les plus réccurents
+texte_complet = ' '.join(emo_freqP['Sujet'])
+sujets = texte_complet.split()
+# Comptez la fréquence de chaque sujet
+compteur_sujets = Counter(sujets)
+total_sujets = len(sujets)
 
+# Déterminez le seuil pour les 10 % des sujets les plus fréquents
+seuil = int(total_sujets * 0.1)
+sujets_freq = compteur_sujets.most_common()
+sujets_pos_top10 = sujets_freq[:seuil]
+print(sujets_pos_top10)
+
+
+texte_complet = ' '.join(emo_freqN['Sujet'])
+sujets = texte_complet.split()
+compteur_sujets = Counter(sujets)
+total_sujets = len(sujets)
+seuil = int(total_sujets * 0.1)
+sujets_freq = compteur_sujets.most_common()
+sujets_neg_top10 = sujets_freq[:seuil]
+
+print(sujets_neg_top10)
 
 
 
