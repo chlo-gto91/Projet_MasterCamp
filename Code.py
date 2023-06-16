@@ -175,7 +175,8 @@ def trouve_sujet(dic,com,df,positif_df, negatif_df,sujet_aborde):
 #com="La qualité n'est pas la meilleure, mais c'est normal à ce prix, on ne peut pas tout avoir. Les livraisons sont bien suivies et de plus en plus rapide. Cashback un peu long, mais rien de dramatique."
 #com="Surprise par tant de notes négatives. Cliente depuis des années d'Amazon il m'est arrivé d'avoir des problèmes sur une commande mais elle a toujours été réglée rapidement.Renvoi facile et remboursement dans la semaine.Seul bémol, leurs quelques envois effectués par UPS qui est une entreprise catastrophique. Si j'avais une remarque à faire à Amazon serait de ne jamais travailler avec ce transporteur qui gâche leur image."
 #com="Mes deux chiens adorent quand je mets des friandises et qu ils s'amusent a les chercher. Très solide tapis, bonne qualité, assez grand pour 2 voir 3 chiens. Moi j'ai un Springer spaniel et un Shih Tzu. Je recommande ce tapis"
-com="Très joli tapis de fouille. Mon malinois de 1 an l'a adopté tout de suite.Jolies couleurs et items variés, ce qui permet au chien d'avoir plusieurs jeux à disposition.En revanche il est petit. Mesure 70*47 et non 70*50 comme décrit.Les photos d'illustration sont retouchées et donc trompeuses. Ce n'est pas une pratique recommandable. J'enlève donc 1 étoile pour la déception a l'arrivée du produit qu'on est en droit de penser plus grand."
+#com="Très joli tapis de fouille. Mon malinois de 1 an l'a adopté tout de suite.Jolies couleurs et items variés, ce qui permet au chien d'avoir plusieurs jeux à disposition.En revanche il est petit. Mesure 70*47 et non 70*50 comme décrit.Les photos d'illustration sont retouchées et donc trompeuses. Ce n'est pas une pratique recommandable. J'enlève donc 1 étoile pour la déception a l'arrivée du produit qu'on est en droit de penser plus grand."
+com="Il y a longtemps que j'attendais un nouveau roman de Fred Vargas et celui-ci ne m'a pas déçu. On retrouve le commissaire Adamsberg.L'histoire comme d'habitude est prenante et la fin surprenante"
 
 # Partie qui restera
 
@@ -186,7 +187,9 @@ negatif_df = pd.read_csv("negatif_df.csv")
 negatif_df=pd.DataFrame(negatif_df)
 sujet_aborde = ["site", "internet", "personnel", "livraison", "marque", "delai", "esthetique",
                     "collection", "materiel", "prix", "etablissement", "matiere", "taille", "politesse", "cashback",
-                    "produit", "commande", "service", "client", "vetement", "qualite", "regler", "renvoi", "image"]
+                    "produit", "commande", "service", "client", "vetement", "qualite", "regler", "renvoi", "image", 
+                    "roman", "histoire", "tissus", "pads", "utilite", "achat", "design","couleurs","brosse", "utilisation", 
+                    "solide", "solidite", "appareil", "clips", "article", "coutures", "toile", "plastique", "housse", "nettoyage"]
 
 #Dataframe qui contindra emotion et sujet pour tous les commentaires analysé
 dfinal= pd.DataFrame({
