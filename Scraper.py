@@ -31,8 +31,8 @@ def scrape_amazon_reviews(url):
 
     return review_data
 
-with open('config.yml', 'r') as file:
-    config = yaml.safe_load(file)
+#with open('config.yml', 'r') as file:
+    #config = yaml.safe_load(file)
 
 reviews_data = []
 

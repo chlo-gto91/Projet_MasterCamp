@@ -188,74 +188,48 @@ sujet_aborde = ["site", "internet", "personnel", "livraison", "marque", "delai",
                     "collection", "materiel", "prix", "etablissement", "matiere", "taille", "politesse", "cashback",
                     "produit", "commande", "service", "client", "vetement", "qualite", "regler", "renvoi", "image"]
 
+liste_com_df=pd.read_csv("reviewstest3.csv")
+liste_com_df=pd.DataFrame(liste_com_df)
+print(liste_com_df)
 #Dataframe qui contindra emotion et sujet pour tous les commentaires analysé
 dfinal= pd.DataFrame({
         "Emotion": [],
         "Sujet": [],
         "P/N": [] # changer derniere colonne par coef ou ajouter colonne avec
     })
-#Faire début de la boucle pour etre dans un seul commentaire
-phrases_separees = segmenter_phrases(com)
+for com in liste_com_df['Review']:
+    phrases_separees = segmenter_phrases(com)
 
-#initialisation du dataframes pour chaque com
-df = pd.DataFrame({
-        "Emotion": [],
-        "Sujet": [],
-        "P/N": []
-    })
+    #initialisation du dataframes pour chaque com
+    df = pd.DataFrame({
+            "Emotion": [],
+            "Sujet": [],
+            "P/N": []
+        })
 
-for phrase in phrases_separees:
+    for phrase in phrases_separees:
 
-    #Permet de simplifier le message pour annalyse
-    texte_modifie = phrase.replace("'", " ")
-    phrase = enleverpetitmot(texte_modifie)
-    texte_sans_accents = unidecode.unidecode(phrase)
-    phrase_sans_ponctuation=enlever_ponctuation(texte_sans_accents)
-    phrase=phrase_sans_ponctuation.lower()
-    print(phrase)
+        #Permet de simplifier le message pour annalyse
+        texte_modifie = phrase.replace("'", " ")
+        phrase = enleverpetitmot(texte_modifie)
+        texte_sans_accents = unidecode.unidecode(phrase)
+        phrase_sans_ponctuation=enlever_ponctuation(texte_sans_accents)
+        phrase=phrase_sans_ponctuation.lower()
+        print(phrase)
 
-    #Analyse de la phrase
-    dic=chercheemotion(phrase,positif_df,negatif_df,sujet_aborde)
-    df=trouve_sujet(dic, phrase, df,positif_df, negatif_df,sujet_aborde) # trouver le sujet
+        #Analyse de la phrase
+        dic=chercheemotion(phrase,positif_df,negatif_df,sujet_aborde)
+        df=trouve_sujet(dic, phrase, df,positif_df, negatif_df,sujet_aborde) # trouver le sujet
 
-print(df) # resultat pour un commentaire
+    print(df) # resultat pour un commentaire
 
 #------A DECOMMENTER UNE FOIS BOUCLE COM PAR COM FAIT ------
 
-#assembler dans un data frame final
-#dfinal=pd.concat([dfinal,df])
-def parcourir_commentaires(fichier, commentaire=""):
-    ligne = fichier.readline()
-    
-    if not ligne:
-        # Fin du fichier, afficher le dernier commentaire s'il existe
-        if commentaire:
-            print("Commentaire :")
-            print(commentaire)
-        return
-    
-    if ligne.startswith('#'):
-        # Ajouter la ligne au commentaire actuel
-        commentaire += ligne.strip() + '\n'
-    
-    if not ligne.strip() and commentaire:
-        # Afficher le commentaire complet
-        print("Commentaire :")
-        print(commentaire)
-        # Réinitialiser le commentaire
-        commentaire = ""
-    
-    # Appel récursif pour lire la ligne suivante
-    parcourir_commentaires(fichier, commentaire)
-
-# Ouvrir le fichier en mode lecture
-with open('fichier_commentaires.txt', 'r') as fichier:
-    parcourir_commentaires(fichier)
-
+    #assembler dans un data frame final
+    dfinal=pd.concat([dfinal,df])
 
 #Fin de la boucle pour passer commentaire par commentaire
 
-""" ------A DECOMMENTER UNE FOIS BOUCLE COM PAR COM FAIT ------
 
 # mettre proprement dataframe final avec les indexs 
 dfinal=dfinal.reset_index()
@@ -272,7 +246,7 @@ data_neg = dfinal.loc[dfinal['P/N'] == 'N']
 print(data_pos)
 print(data_neg)
 
-"""
+
 
 
 
