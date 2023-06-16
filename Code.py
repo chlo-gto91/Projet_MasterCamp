@@ -120,7 +120,7 @@ def verif_avant(com,df):
         return "GENERAL"
 
 # associe à chaque emotion le sujet
-def trouve_sujet(dic,com,df,positif_df, negatif_df,sujet_aborde):
+def trouve_sujet(dic,com,df,positif_df, negatif_df,sujet_aborde,adverbe):
 
     com_mot = com.split()
     for key in dic.keys():
@@ -139,14 +139,19 @@ def trouve_sujet(dic,com,df,positif_df, negatif_df,sujet_aborde):
         for i in range(debut, fin):
             if detecter_sujet_ecart_mot(com_mot[i],sujet_aborde):
                 if com_mot[i] not in positif_df.values and com_mot[i] not in negatif_df.values :
-                    if com_mot[i]!=key and com_mot[i]!="pas" and com_mot[i]!="peu":
+                    if com_mot[i]!=key and com_mot[i] not in adverbe:
                         emo = emo + " " + com_mot[i]
 
         if len(emo)==0:
 
             emo=verif_avant(com, df) # si n'a pas trouver le sujet
-            if emo=="GENERAL" and pos+1<len(com_mot):
-                emo=com_mot[pos+1]
+            x=1
+            while emo=="GENERAL" and pos+x<len(com_mot):
+                j=pos+x
+                if com_mot[j] not in positif_df.values and com_mot[j] not in negatif_df.values :
+                    if com_mot[j]!=key and com_mot[j] not in adverbe:
+                        emo=com_mot[j]
+                x+=1
         new_row = pd.DataFrame({
             "Emotion": [key],
             "Sujet": [emo],
@@ -203,8 +208,8 @@ sujet_aborde = ["site", "internet", "personnel", "livraison", "marque", "delai",
                     "produit", "commande", "service", "client", "vetement", "qualite", "regler", "renvoi", "image", 
                     "roman", "histoire", "tissus", "pads", "utilite", "achat", "design","couleurs","brosse", "utilisation", 
                     "solide", "solidite", "appareil", "clips", "article", "coutures", "toile", "plastique", "housse", "nettoyage"]
-
-liste_com_df=pd.read_csv("reviewstest3.csv")
+adverbe=["peu", "pas","mais","sans","dans"]
+liste_com_df=pd.read_csv("reviews.csv")
 liste_com_df=pd.DataFrame(liste_com_df)
 print(liste_com_df)
 #Dataframe qui contindra emotion et sujet pour tous les commentaires analysé
@@ -235,7 +240,7 @@ for com in liste_com_df['Review']:
 
         #Analyse de la phrase
         dic=chercheemotion(phrase,positif_df,negatif_df,sujet_aborde)
-        df=trouve_sujet(dic, phrase, df,positif_df, negatif_df,sujet_aborde) # trouver le sujet
+        df=trouve_sujet(dic, phrase, df,positif_df, negatif_df,sujet_aborde,adverbe) # trouver le sujet
 
     print(df) # resultat pour un commentaire
 
