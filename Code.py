@@ -145,8 +145,6 @@ def trouve_sujet(dic,com,df,positif_df, negatif_df,sujet_aborde):
         if len(emo)==0:
 
             emo=verif_avant(com, df) # si n'a pas trouver le sujet
-            if emo=="GENERAL" and pos+1!=len(com_mot):
-                emo=com_mot[pos+1]
 
         new_row = pd.DataFrame({
             "Emotion": [key],
@@ -164,6 +162,14 @@ def trouve_sujet(dic,com,df,positif_df, negatif_df,sujet_aborde):
 
 ####    A FAIRE      ###########
 
+#####################################
+##### PARTIE ANALYSE COM ############
+####################################
+
+def sujet_majeur(df):
+    df_trier=df.groupby(df["Sujet"])
+    print("Trier : ",df_trier)
+
 
 #####################################
 ##### PROGRAMME PRINCIPALE ##########
@@ -178,6 +184,7 @@ def trouve_sujet(dic,com,df,positif_df, negatif_df,sujet_aborde):
 #com="Très joli tapis de fouille. Mon malinois de 1 an l'a adopté tout de suite.Jolies couleurs et items variés, ce qui permet au chien d'avoir plusieurs jeux à disposition.En revanche il est petit. Mesure 70*47 et non 70*50 comme décrit.Les photos d'illustration sont retouchées et donc trompeuses. Ce n'est pas une pratique recommandable. J'enlève donc 1 étoile pour la déception a l'arrivée du produit qu'on est en droit de penser plus grand."
 com="Il y a longtemps que j'attendais un nouveau roman de Fred Vargas et celui-ci ne m'a pas déçu. On retrouve le commissaire Adamsberg.L'histoire comme d'habitude est prenante et la fin surprenante"
 
+
 # Partie qui restera
 
 # Nos données : sujet et emotion
@@ -191,46 +198,48 @@ sujet_aborde = ["site", "internet", "personnel", "livraison", "marque", "delai",
                     "roman", "histoire", "tissus", "pads", "utilite", "achat", "design","couleurs","brosse", "utilisation", 
                     "solide", "solidite", "appareil", "clips", "article", "coutures", "toile", "plastique", "housse", "nettoyage"]
 
+liste_com_df=pd.read_csv("reviewstest3.csv")
+liste_com_df=pd.DataFrame(liste_com_df)
+print(liste_com_df)
 #Dataframe qui contindra emotion et sujet pour tous les commentaires analysé
 dfinal= pd.DataFrame({
         "Emotion": [],
         "Sujet": [],
         "P/N": [] # changer derniere colonne par coef ou ajouter colonne avec
     })
-#Faire début de la boucle pour etre dans un seul commentaire
-phrases_separees = segmenter_phrases(com)
+for com in liste_com_df['Review']:
+    phrases_separees = segmenter_phrases(com)
 
-#initialisation du dataframes pour chaque com
-df = pd.DataFrame({
-        "Emotion": [],
-        "Sujet": [],
-        "P/N": []
-    })
+    #initialisation du dataframes pour chaque com
+    df = pd.DataFrame({
+            "Emotion": [],
+            "Sujet": [],
+            "P/N": []
+        })
 
-for phrase in phrases_separees:
+    for phrase in phrases_separees:
 
-    #Permet de simplifier le message pour annalyse
-    texte_modifie = phrase.replace("'", " ")
-    phrase = enleverpetitmot(texte_modifie)
-    texte_sans_accents = unidecode.unidecode(phrase)
-    phrase_sans_ponctuation=enlever_ponctuation(texte_sans_accents)
-    phrase=phrase_sans_ponctuation.lower()
-    print(phrase)
+        #Permet de simplifier le message pour annalyse
+        texte_modifie = phrase.replace("'", " ")
+        phrase = enleverpetitmot(texte_modifie)
+        texte_sans_accents = unidecode.unidecode(phrase)
+        phrase_sans_ponctuation=enlever_ponctuation(texte_sans_accents)
+        phrase=phrase_sans_ponctuation.lower()
+        print(phrase)
 
-    #Analyse de la phrase
-    dic=chercheemotion(phrase,positif_df,negatif_df,sujet_aborde)
-    df=trouve_sujet(dic, phrase, df,positif_df, negatif_df,sujet_aborde) # trouver le sujet
+        #Analyse de la phrase
+        dic=chercheemotion(phrase,positif_df,negatif_df,sujet_aborde)
+        df=trouve_sujet(dic, phrase, df,positif_df, negatif_df,sujet_aborde) # trouver le sujet
 
-print(df) # resultat pour un commentaire
+    print(df) # resultat pour un commentaire
 
 #------A DECOMMENTER UNE FOIS BOUCLE COM PAR COM FAIT ------
 
-#assembler dans un data frame final
-#dfinal=pd.concat([dfinal,df])
+    #assembler dans un data frame final
+    dfinal=pd.concat([dfinal,df])
 
 #Fin de la boucle pour passer commentaire par commentaire
 
-""" ------A DECOMMENTER UNE FOIS BOUCLE COM PAR COM FAIT ------
 
 # mettre proprement dataframe final avec les indexs 
 dfinal=dfinal.reset_index()
@@ -247,7 +256,7 @@ data_neg = dfinal.loc[dfinal['P/N'] == 'N']
 print(data_pos)
 print(data_neg)
 
-"""
+sujet_majeur(data_pos)
 
 
 
