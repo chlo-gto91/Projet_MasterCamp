@@ -224,6 +224,35 @@ print(df) # resultat pour un commentaire
 
 #assembler dans un data frame final
 #dfinal=pd.concat([dfinal,df])
+from typing import TextIO
+
+def parcourir_commentaires(fichier: TextIO, commentaire: str = "") -> None:
+    ligne = fichier.readline()
+    
+    if not ligne:
+        # Fin du fichier, afficher le dernier commentaire s'il existe
+        if commentaire:
+            print("Commentaire :")
+            print(commentaire)
+        return
+    
+    if ligne.startswith('#'):
+        # Ajouter la ligne au commentaire actuel
+        commentaire += ligne.strip() + '\n'
+    
+    if not ligne.strip() and commentaire:
+        # Afficher le commentaire complet
+        print("Commentaire :")
+        print(commentaire)
+        # Réinitialiser le commentaire
+        commentaire = ""
+    
+    # Appel récursif pour lire la ligne suivante
+    parcourir_commentaires(fichier, commentaire)
+
+# Ouvrir le fichier en mode lecture
+with open('fichier_commentaires.txt', 'r') as fichier:
+    parcourir_commentaires(fichier)
 
 #Fin de la boucle pour passer commentaire par commentaire
 
