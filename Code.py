@@ -344,28 +344,6 @@ print("Negatif : ",dic_neg)
 
 
 
-#--------------------------------APRES : POUR TROUVER LES SUJETS LES PLUS FREQUENTS POUR P ET N-----------------------------------------
-"""
-
-        
-# Compter les occurrences de chaque sujet pour P et N
-compt_emoP = data_pos['Sujet'].value_counts()
-compt_emoN = data_neg['Sujet'].value_counts()
-
-# Obtenir l'émotion la plus fréquente pour P et N
-emo_freqP = compt_emoP.idxmax()
-emo_freqN = compt_emoN.idxmax()
-
-# Afficher l'émotion la plus fréquente dans les positifs puis négatifs
-print("Le sujet positif le plus fréquent est :", emo_freqP)
-print("Le sujet négatif le plus fréquent est :", emo_freqN)
-
-
-
-"""
-
-
-
 
 
 
