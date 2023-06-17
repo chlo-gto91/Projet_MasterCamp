@@ -5,6 +5,7 @@ import Levenshtein
 import string
 from nltk.stem import SnowballStemmer
 from collections import Counter
+import numpy as np
 
 #####################################
 ##### PARTIE IMPORTER COMMENTAIRE####
@@ -142,7 +143,10 @@ def trouve_sujet(dic,com,df,positif_df, negatif_df,sujet_aborde,adverbe):
             if detecter_sujet_ecart_mot(com_mot[i],sujet_aborde):
                 if com_mot[i] not in positif_df.values and com_mot[i] not in negatif_df.values :
                     if com_mot[i]!=key and com_mot[i] not in adverbe:
-                        emo = emo + " " + com_mot[i]
+                        if len(emo)==0:
+                            emo = com_mot[i]
+                        else :
+                            emo = emo + " " + com_mot[i]
 
         if len(emo)==0:
 
@@ -194,18 +198,39 @@ def split_sujet(df):
 
     return df
 
+def enlever_doublons(sujets_counts):
+    notin=[]
+    conteur=[]
+    index=[]
+    for val in range(len(sujets_counts)):
+        if val not in notin:
+            conteur.append(sujets_counts[val])
+            index.append(sujets_counts.index[val])
+            for i in range (val+1,len(sujets_counts)):
+                if i not in notin:
+                    distance = Levenshtein.distance(sujets_counts.index[val], sujets_counts.index[i])
+                    if distance <= 1:  # La distance maximale autorisée
+
+                        notin.append(i)
+                        conteur[val]=sujets_counts[val]+sujets_counts[i]
+
+    con=np.array(conteur)
+
+    s=pd.Series(con , index=index)
+    return s
+
 
 
 def sujet_majeur(df):
+
     sujets_counts = df['Sujet'].value_counts()
-    liste_mots_sans_espaces = [mot.strip() for mot in sujets_counts.index]
-    print(liste_mots_sans_espaces)
+    s=enlever_doublons(sujets_counts)
     x=int(len(df)*0.2)
     # Obtenez le sujet qui apparaît le plus fréquemment (le premier élément de la série sujets_counts)
-    sujet_plus_frequent = sujets_counts.index[0:x]
+    sujet_plus_frequent = s.index[0:x]
 
     # Affichez le sujet le plus fréquent
-    print("Le sujet le plus fréquent est :", sujet_plus_frequent)
+    print("Les sujets les plus fréquents sont :", sujet_plus_frequent)
 
 
 #####################################
@@ -259,10 +284,11 @@ for com in liste_com_df['Review']:
 
         #Permet de simplifier le message pour annalyse
         texte_modifie = phrase.replace("'", " ")
-        phrase = enleverpetitmot(texte_modifie)
-        texte_sans_accents = unidecode.unidecode(phrase)
-        phrase_sans_ponctuation=enlever_ponctuation(texte_sans_accents)
-        phrase=phrase_sans_ponctuation.lower()
+        phrase_sans_ponctuation = enlever_ponctuation(texte_modifie)
+        texte_sans_accents = unidecode.unidecode(phrase_sans_ponctuation)
+        phrase = texte_sans_accents.lower()
+        phrase = enleverpetitmot(phrase )
+
         print(phrase)
 
         #Analyse de la phrase
