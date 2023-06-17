@@ -221,17 +221,32 @@ def enlever_doublons(sujets_counts):
 
 
 
-def sujet_majeur(df):
-
-    sujets_counts = df['Sujet'].value_counts()
+def mot_majeur(liste,x):
+    sujets_counts = liste.value_counts()
     s=enlever_doublons(sujets_counts)
-    x=int(len(df)*0.2)
     # Obtenez le sujet qui apparaît le plus fréquemment (le premier élément de la série sujets_counts)
     sujet_plus_frequent = s.index[0:x]
 
     # Affichez le sujet le plus fréquent
     print("Les sujets les plus fréquents sont :", sujet_plus_frequent)
+    return sujet_plus_frequent
 
+def emotion_majeur(sujet_frequent,data):
+    dic={}
+    for sujet in sujet_frequent:
+        df_sujet = data.loc[data['Sujet'] == sujet]
+        print(df_sujet)
+        mot_frequent = mot_majeur(df_sujet['Emotion'],2)
+        dic[sujet]=mot_frequent
+    return dic
+
+def trouver_info(data):
+    data_pos = split_sujet(data)
+    x = int(len(data_pos) * 0.2)
+    sujet_frequent_pos = mot_majeur(data_pos['Sujet'],x)
+    dic=emotion_majeur(sujet_frequent_pos, data)
+
+    return dic
 
 #####################################
 ##### PROGRAMME PRINCIPALE ##########
@@ -319,12 +334,12 @@ data_neg = dfinal.loc[dfinal['P/N'] == 'N']
 # Afficher les données filtrées
 #print(data_pos)
 #print(data_neg)
-data_pos=split_sujet(data_pos)
-print(data_pos)
-sujet_majeur(data_pos)
-data_neg=split_sujet(data_neg)
-print(data_neg)
-sujet_majeur(data_neg)
+
+dic_pos=trouver_info(data_pos)
+dic_neg=trouver_info(data_neg)
+
+print("Positif : ",dic_pos)
+print("Negatif : ",dic_neg)
 
 
 
