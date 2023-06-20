@@ -277,7 +277,7 @@ sujet_aborde = ["site", "internet", "personnel", "livraison", "marque", "delai",
                     "solide", "solidite", "appareil", "clips", "article", "coutures", "toile", "plastique", "housse", "nettoyage", "poil"]
 
 adverbe=["peu", "pas","mais","sans","dans"]
-liste_com_df=pd.read_csv("reviews.csv")
+liste_com_df=pd.read_csv("reviewstest3.csv")
 liste_com_df=pd.DataFrame(liste_com_df)
 print(liste_com_df)
 #Dataframe qui contindra emotion et sujet pour tous les commentaires analysé

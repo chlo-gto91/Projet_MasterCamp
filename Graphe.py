@@ -2,12 +2,16 @@ from textblob import TextBlob
 from textblob_fr import PatternTagger, PatternAnalyzer
 import matplotlib.pyplot as plt
 import pandas as pd
+import numpy as np
+import unidecode
+import string
 import unidecode
 import string
 import numpy as np
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 from colorspacious import cspace_converter
+
 
 def segmenter_phrases(commentaire):
     marqueurs = ['.', '!', '?']  # Liste des marqueurs de ponctuation
@@ -53,6 +57,22 @@ for com in liste_com_df['Review']:
         phrase = enleverpetitmot(phrase)
 
         polarity.append(TextBlob(phrase, pos_tagger=PatternTagger(), analyzer=PatternAnalyzer()).sentiment[0])
+
+plt.plot(polarity)
+
+# Couleurs pour les valeurs positives et négatives
+positive_color = 'green'
+negative_color = 'red'
+
+# Création d'un tableau d'indices
+indices = np.arange(len(polarity))
+
+# Tracé du graphe en utilisant des couleurs différentes en fonction de la polarité
+plt.scatter(indices, polarity, c=np.where(polarity >= 0, positive_color, negative_color))
+
+# Affichage du graphe
+plt.show()
+
 
 cmaps = {}
 
