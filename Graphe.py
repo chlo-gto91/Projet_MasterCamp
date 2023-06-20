@@ -56,13 +56,30 @@ for com in liste_com_df['Review']:
 
 cmaps = {}
 
-plt.plot(polarity, label="Courbe avis")
+
+import matplotlib.pyplot as plt
+
+# Données d'exemple
+labels = ['Très insatisfait', 'Insatisfait', 'Moyen', 'Satisfait', 'Très satisfait']
+stars=list(liste_com_df['Stars'])
+proportion=[stars.count(1),stars.count(2),stars.count(3),stars.count(4),stars.count(5)]
+# Création du camembert
+
+plt.pie(proportion, labels=labels, autopct='%1.1f%%', startangle=90)
+
+# Ajout d'un titre
+plt.title('Répartition des évaluations')
+
+# Affichage du camembert
+plt.show()
+
+
+plt.plot(polarity, label="Courbe d'avis")
 moyenne = sum(polarity) / len(polarity)
 plt.axhline(moyenne, color='red', linestyle='--', label='Moyenne')
-plt.xlabel('Nombre de commentaire ')
-plt.ylabel('Niveau positivité ')
+plt.xlabel('Nombre de commentaires ')
+plt.ylabel('Niveau de positivité ')
 plt.title('Emotion générale des commentaires')
-
 plt.legend()
 plt.show()
 
