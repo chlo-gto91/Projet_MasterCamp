@@ -75,9 +75,12 @@ def verif_neg(com_mot,pos):
 def detecter_emotion_ecart_mot(mot,df):
 
     for mot_test in df:
-        distance = Levenshtein.distance(mot_test,mot)
-        if distance <= 1:  # La distance maximale autorisée
+        if mot_test==mot:
             return True
+        else:
+            distance = Levenshtein.distance(mot_test,mot)
+            if distance <= 1:  # La distance maximale autorisée
+                return True
 
     return False
 
@@ -93,14 +96,13 @@ def chercheemotion(com, positif_df, negatif_df,sujet_aborde):
                         dic[com_mot[i]] = ["N", i]
                     else :
                         dic[com_mot[i]] = ["P", i]
-        if detecter_emotion_ecart_mot(com_mot[i],negatif_df.values[:,0]):
+        elif detecter_emotion_ecart_mot(com_mot[i],negatif_df.values[:,0]):
             if com_mot[i] != 'pas' and com_mot[i] != 'jamais' and com_mot[i] != 'rien':
                 if com_mot[i] not in sujet_aborde:
                     if verif_neg(com_mot, i):
                         dic[com_mot[i]] = ["P", i]
                     else :
                         dic[com_mot[i]] = ["N", i]
-    print(dic)
     return dic
 
 ###### Recherche emotion ########
@@ -109,9 +111,10 @@ def chercheemotion(com, positif_df, negatif_df,sujet_aborde):
 def detecter_sujet_ecart_mot(mot,df):
 
     for mot_test in df:
-        distance = Levenshtein.distance(mot_test,mot)
-        if distance <= 2:  # La distance maximale autorisée
-            return True
+        if mot_test==mot:
+            distance = Levenshtein.distance(mot_test,mot)
+            if distance <= 1:  # La distance maximale autorisée
+                return True
 
     return False
 
@@ -213,9 +216,10 @@ def enlever_doublons(sujets_counts):
                 if i not in notin:
                     distance = Levenshtein.distance(sujets_counts.index[val], sujets_counts.index[i])
                     if distance <= 1:  # La distance maximale autorisée
-
+                        ind = val - len(notin)
                         notin.append(i)
-                        conteur[val]=sujets_counts[val]+sujets_counts[i]
+                        conteur[ind] = conteur[ind] + sujets_counts[i]
+
 
     con=np.array(conteur)
 
@@ -228,22 +232,19 @@ def mot_majeur(liste,x):
     # Obtenez le sujet qui apparaît le plus fréquemment (le premier élément de la série sujets_counts)
     sujet_plus_frequent = s.index[0:x]
 
-    # Affichez le sujet le plus fréquent
-    print("Les sujets les plus fréquents sont :", sujet_plus_frequent)
     return sujet_plus_frequent
 
 def emotion_majeur(sujet_frequent,data):
     dic={}
     for sujet in sujet_frequent:
         df_sujet = data.loc[data['Sujet'] == sujet]
-        print(df_sujet)
         mot_frequent = mot_majeur(df_sujet['Emotion'],2)
         dic[sujet]=mot_frequent
     return dic
 
 def trouver_info(data):
     data_pos = split_sujet(data)
-    x = int(len(data_pos) * 0.1)
+    x = int(len(data_pos) * 0.05)
     sujet_frequent_pos = mot_majeur(data_pos['Sujet'],x)
     dic=emotion_majeur(sujet_frequent_pos, data)
 
@@ -253,17 +254,6 @@ def trouver_info(data):
 ##### PROGRAMME PRINCIPALE ##########
 ####################################
 
-#Partie momentané en l'attente de boucle
-
-#com = "Shein est une marque en ligne incroyable ! Leur vetements à la mode sont adorables et de grande qualité. Leurs collections sont variées et suivent les dernières tendances. La livraison est rapide et leur service client est excellent. Je recommande vivement Shein pour tous ceux qui recherchent des vêtement stylés à des prix abordables !"
-#com="La qualité n'est pas la meilleure, mais c'est normal à ce prix, on ne peut pas tout avoir. Les livraisons sont bien suivies et de plus en plus rapide. Cashback un peu long, mais rien de dramatique."
-#com="Surprise par tant de notes négatives. Cliente depuis des années d'Amazon il m'est arrivé d'avoir des problèmes sur une commande mais elle a toujours été réglée rapidement.Renvoi facile et remboursement dans la semaine.Seul bémol, leurs quelques envois effectués par UPS qui est une entreprise catastrophique. Si j'avais une remarque à faire à Amazon serait de ne jamais travailler avec ce transporteur qui gâche leur image."
-#com="Mes deux chiens adorent quand je mets des friandises et qu ils s'amusent a les chercher. Très solide tapis, bonne qualité, assez grand pour 2 voir 3 chiens. Moi j'ai un Springer spaniel et un Shih Tzu. Je recommande ce tapis"
-#com="Très joli tapis de fouille. Mon malinois de 1 an l'a adopté tout de suite.Jolies couleurs et items variés, ce qui permet au chien d'avoir plusieurs jeux à disposition.En revanche il est petit. Mesure 70*47 et non 70*50 comme décrit.Les photos d'illustration sont retouchées et donc trompeuses. Ce n'est pas une pratique recommandable. J'enlève donc 1 étoile pour la déception a l'arrivée du produit qu'on est en droit de penser plus grand."
-com="Il y a longtemps que j'attendais un nouveau roman de Fred Vargas et celui-ci ne m'a pas déçu. On retrouve le commissaire Adamsberg.L'histoire comme d'habitude est prenante et la fin surprenante"
-
-
-# Partie qui restera
 
 # Nos données : sujet et emotion
 positif_df = pd.read_csv("positif_df.csv")
@@ -276,8 +266,8 @@ sujet_aborde = ["site", "internet", "personnel", "livraison", "marque", "delai",
                     "roman", "histoire", "tissus", "pads", "utilite", "achat", "design","couleurs","brosse", "utilisation", 
                     "solide", "solidite", "appareil", "clips", "article", "coutures", "toile", "plastique", "housse", "nettoyage", "poil"]
 
-adverbe=["peu", "pas","mais","sans","dans"]
-liste_com_df=pd.read_csv("reviewstest3.csv")
+adverbe=["peu", "pas","mais","sans","dans","pour","plus","vous","elle"]
+liste_com_df=pd.read_csv("reviews2.csv")
 liste_com_df=pd.DataFrame(liste_com_df)
 print(liste_com_df)
 #Dataframe qui contindra emotion et sujet pour tous les commentaires analysé
@@ -332,9 +322,6 @@ dfinal = dfinal.drop('index', axis=1)
 data_pos = dfinal.loc[dfinal['P/N'] == 'P']
 data_neg = dfinal.loc[dfinal['P/N'] == 'N']
 
-# Afficher les données filtrées
-#print(data_pos)
-#print(data_neg)
 
 dic_pos=trouver_info(data_pos)
 dic_neg=trouver_info(data_neg)
@@ -342,26 +329,15 @@ dic_neg=trouver_info(data_neg)
 print("Positif : ",dic_pos)
 print("Negatif : ",dic_neg)
 
-import matplotlib.pyplot as plt
-
-# Données d'exemple
 labels = ['Très insatisfait', 'Insatisfait', 'Moyen', 'Satisfait', 'Très satisfait']
 stars=list(liste_com_df['Stars'])
 proportion=[stars.count(1),stars.count(2),stars.count(3),stars.count(4),stars.count(5)]
-# Création du camembert
 
 plt.pie(proportion, labels=labels, autopct='%1.1f%%', startangle=90)
-
-# Ajout d'un titre
 plt.title('Répartition des évaluations')
-
-# Affichage du camembert
 plt.show()
 
-
 plt.plot(polarity, label="Courbe d'avis")
-moyenne = sum(polarity) / len(polarity)
-plt.axhline(moyenne, color='red', linestyle='--', label='Moyenne')
 plt.xlabel('Nombre de commentaires ')
 plt.ylabel('Niveau de positivité ')
 plt.title('Emotion générale des commentaires')

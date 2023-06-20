@@ -74,9 +74,6 @@ plt.scatter(indices, polarity, c=np.where(polarity >= 0, positive_color, negativ
 # Affichage du graphe
 plt.show()
 
-
-cmaps = {}
-
 labels = ['Très insatisfait', 'Insatisfait', 'Moyen', 'Satisfait', 'Très satisfait']
 stars=list(liste_com_df['Stars'])
 proportion=[stars.count(1),stars.count(2),stars.count(3),stars.count(4),stars.count(5)]
