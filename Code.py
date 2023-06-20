@@ -6,6 +6,9 @@ import string
 from nltk.stem import SnowballStemmer
 from collections import Counter
 import numpy as np
+from textblob import TextBlob
+from textblob_fr import PatternTagger, PatternAnalyzer
+import matplotlib.pyplot as plt
 
 #####################################
 ##### PARTIE IMPORTER COMMENTAIRE####
@@ -219,8 +222,6 @@ def enlever_doublons(sujets_counts):
     s=pd.Series(con , index=index)
     return s
 
-
-
 def mot_majeur(liste,x):
     sujets_counts = liste.value_counts()
     s=enlever_doublons(sujets_counts)
@@ -242,7 +243,7 @@ def emotion_majeur(sujet_frequent,data):
 
 def trouver_info(data):
     data_pos = split_sujet(data)
-    x = int(len(data_pos) * 0.2)
+    x = int(len(data_pos) * 0.1)
     sujet_frequent_pos = mot_majeur(data_pos['Sujet'],x)
     dic=emotion_majeur(sujet_frequent_pos, data)
 
@@ -285,6 +286,7 @@ dfinal= pd.DataFrame({
         "Sujet": [],
         "P/N": [] # changer derniere colonne par coef ou ajouter colonne avec
     })
+polarity = []
 for com in liste_com_df['Review']:
     phrases_separees = segmenter_phrases(com)
 
@@ -296,6 +298,8 @@ for com in liste_com_df['Review']:
         })
 
     for phrase in phrases_separees:
+
+        polarity.append(TextBlob(phrase, pos_tagger=PatternTagger(), analyzer=PatternAnalyzer()).sentiment[0])
 
         #Permet de simplifier le message pour annalyse
         texte_modifie = phrase.replace("'", " ")
@@ -312,13 +316,8 @@ for com in liste_com_df['Review']:
 
     print(df) # resultat pour un commentaire
 
-#------A DECOMMENTER UNE FOIS BOUCLE COM PAR COM FAIT ------
-
     #assembler dans un data frame final
     dfinal=pd.concat([dfinal,df])
-
-#Fin de la boucle pour passer commentaire par commentaire
-
 
 # mettre proprement dataframe final avec les indexs 
 dfinal=dfinal.reset_index()
@@ -341,6 +340,7 @@ dic_neg=trouver_info(data_neg)
 print("Positif : ",dic_pos)
 print("Negatif : ",dic_neg)
 
+plt.plot(polarity)
 
 
 
