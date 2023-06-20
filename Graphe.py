@@ -2,9 +2,18 @@ from textblob import TextBlob
 from textblob_fr import PatternTagger, PatternAnalyzer
 import matplotlib.pyplot as plt
 import pandas as pd
+<<<<<<< HEAD
 import numpy as np
 import unidecode
 import string
+=======
+import unidecode
+import string
+import numpy as np
+import matplotlib as mpl
+import matplotlib.pyplot as plt
+from colorspacious import cspace_converter
+>>>>>>> c6611eb63f6090f8b117a04306e20328603edac3
 
 def segmenter_phrases(commentaire):
     marqueurs = ['.', '!', '?']  # Liste des marqueurs de ponctuation
@@ -51,6 +60,7 @@ for com in liste_com_df['Review']:
 
         polarity.append(TextBlob(phrase, pos_tagger=PatternTagger(), analyzer=PatternAnalyzer()).sentiment[0])
 
+<<<<<<< HEAD
 plt.plot(polarity)
 
 # Couleurs pour les valeurs positives et négatives
@@ -69,3 +79,17 @@ plt.show()
 
 
 
+=======
+cmaps = {}
+
+plt.plot(polarity, label="Courbe avis")
+moyenne = sum(polarity) / len(polarity)
+plt.axhline(moyenne, color='red', linestyle='--', label='Moyenne')
+plt.xlabel('Nombre de commentaire ')
+plt.ylabel('Niveau positivité ')
+plt.title('Emotion générale des commentaires')
+
+plt.legend()
+plt.show()
+
+>>>>>>> c6611eb63f6090f8b117a04306e20328603edac3
