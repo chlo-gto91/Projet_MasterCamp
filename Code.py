@@ -308,6 +308,8 @@ for com in liste_com_df['Review']:
         phrase = texte_sans_accents.lower()
         phrase = enleverpetitmot(phrase )
 
+        polarity.append(TextBlob(phrase, pos_tagger=PatternTagger(), analyzer=PatternAnalyzer()).sentiment[0])
+
         print(phrase)
 
         #Analyse de la phrase
@@ -340,9 +342,31 @@ dic_neg=trouver_info(data_neg)
 print("Positif : ",dic_pos)
 print("Negatif : ",dic_neg)
 
-plt.plot(polarity)
+import matplotlib.pyplot as plt
+
+# Données d'exemple
+labels = ['Très insatisfait', 'Insatisfait', 'Moyen', 'Satisfait', 'Très satisfait']
+stars=list(liste_com_df['Stars'])
+proportion=[stars.count(1),stars.count(2),stars.count(3),stars.count(4),stars.count(5)]
+# Création du camembert
+
+plt.pie(proportion, labels=labels, autopct='%1.1f%%', startangle=90)
+
+# Ajout d'un titre
+plt.title('Répartition des évaluations')
+
+# Affichage du camembert
+plt.show()
 
 
+plt.plot(polarity, label="Courbe d'avis")
+moyenne = sum(polarity) / len(polarity)
+plt.axhline(moyenne, color='red', linestyle='--', label='Moyenne')
+plt.xlabel('Nombre de commentaires ')
+plt.ylabel('Niveau de positivité ')
+plt.title('Emotion générale des commentaires')
+plt.legend()
+plt.show()
 
 
 

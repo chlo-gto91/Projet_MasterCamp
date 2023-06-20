@@ -13,6 +13,7 @@ import matplotlib.pyplot as plt
 from colorspacious import cspace_converter
 
 
+
 def segmenter_phrases(commentaire):
     marqueurs = ['.', '!', '?']  # Liste des marqueurs de ponctuation
     phrases = []
@@ -63,13 +64,20 @@ plt.plot(polarity)
 
 cmaps = {}
 
-plt.plot(polarity, label="Courbe avis")
+labels = ['Très insatisfait', 'Insatisfait', 'Moyen', 'Satisfait', 'Très satisfait']
+stars=list(liste_com_df['Stars'])
+proportion=[stars.count(1),stars.count(2),stars.count(3),stars.count(4),stars.count(5)]
+
+plt.pie(proportion, labels=labels, autopct='%1.1f%%', startangle=90)
+plt.title('Répartition des évaluations')
+plt.show()
+
+plt.plot(polarity, label="Courbe d'avis")
 moyenne = sum(polarity) / len(polarity)
 plt.axhline(moyenne, color='red', linestyle='--', label='Moyenne')
-plt.xlabel('Nombre de commentaire ')
-plt.ylabel('Niveau positivité ')
+plt.xlabel('Nombre de commentaires ')
+plt.ylabel('Niveau de positivité ')
 plt.title('Emotion générale des commentaires')
-
 plt.legend()
 plt.show()
 
