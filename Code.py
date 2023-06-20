@@ -242,7 +242,7 @@ def emotion_majeur(sujet_frequent,data):
 
 def trouver_info(data):
     data_pos = split_sujet(data)
-    x = int(len(data_pos) * 0.2)
+    x = int(len(data_pos) * 0.1)
     sujet_frequent_pos = mot_majeur(data_pos['Sujet'],x)
     dic=emotion_majeur(sujet_frequent_pos, data)
 
@@ -276,7 +276,7 @@ sujet_aborde = ["site", "internet", "personnel", "livraison", "marque", "delai",
                     "solide", "solidite", "appareil", "clips", "article", "coutures", "toile", "plastique", "housse", "nettoyage", "poil"]
 
 adverbe=["peu", "pas","mais","sans","dans"]
-liste_com_df=pd.read_csv("reviews.csv")
+liste_com_df=pd.read_csv("reviewstest3.csv")
 liste_com_df=pd.DataFrame(liste_com_df)
 print(liste_com_df)
 #Dataframe qui contindra emotion et sujet pour tous les commentaires analysé
