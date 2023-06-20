@@ -13,6 +13,7 @@ import matplotlib.pyplot as plt
 from colorspacious import cspace_converter
 
 
+
 def segmenter_phrases(commentaire):
     marqueurs = ['.', '!', '?']  # Liste des marqueurs de ponctuation
     phrases = []
@@ -76,23 +77,13 @@ plt.show()
 
 cmaps = {}
 
-
-import matplotlib.pyplot as plt
-
-# Données d'exemple
 labels = ['Très insatisfait', 'Insatisfait', 'Moyen', 'Satisfait', 'Très satisfait']
 stars=list(liste_com_df['Stars'])
 proportion=[stars.count(1),stars.count(2),stars.count(3),stars.count(4),stars.count(5)]
-# Création du camembert
 
 plt.pie(proportion, labels=labels, autopct='%1.1f%%', startangle=90)
-
-# Ajout d'un titre
 plt.title('Répartition des évaluations')
-
-# Affichage du camembert
 plt.show()
-
 
 plt.plot(polarity, label="Courbe d'avis")
 moyenne = sum(polarity) / len(polarity)
