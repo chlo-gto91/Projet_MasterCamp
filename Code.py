@@ -245,7 +245,7 @@ def emotion_majeur(sujet_frequent,data):
 def trouver_info(data):
     data_pos = split_sujet(data)
     x = int(len(data_pos) * 0.05)
-    sujet_frequent_pos = mot_majeur(data_pos['Sujet'],x)
+    sujet_frequent_pos = mot_majeur(data_pos['Sujet'],3)
     dic=emotion_majeur(sujet_frequent_pos, data)
 
     return dic
@@ -260,7 +260,7 @@ positif_df = pd.read_csv("positif_df.csv")
 positif_df=pd.DataFrame(positif_df)
 negatif_df = pd.read_csv("negatif_df.csv")
 negatif_df=pd.DataFrame(negatif_df)
-sujet_aborde = ["site", "internet", "personnel", "livraison", "marque", "delai", "esthetique",
+sujet_aborde = ["site", "haleine","dent","internet", "personnel", "livraison", "marque", "delai", "esthetique",
                     "collection", "materiel", "prix", "etablissement", "matiere", "taille", "politesse", "cashback",
                     "produit", "commande", "service", "client", "vetement", "qualite", "regler", "renvoi", "image", 
                     "roman", "histoire", "tissus", "pads", "utilite", "achat", "design","couleurs","brosse", "utilisation", 
