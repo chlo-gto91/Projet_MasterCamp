@@ -334,6 +334,19 @@ labels = ['Très insatisfait', 'Insatisfait', 'Moyen', 'Satisfait', 'Très satis
 stars = list(liste_com_df['Stars'])
 proportion = [stars.count(1), stars.count(2), stars.count(3), stars.count(4), stars.count(5)]
 
+#MESSAGE ENTREPRISE 
+print("\nBienvenu dans l'analyse des avis que vos clients ont donné sur votre entreprise et vos produits ! ")
+mes_pos = "\nNous avons recueilli plusieurs avis positifs sur votre site web : les plus récurrents montrent une satisfaction liée aux points suivants :"
+print(mes_pos)
+sujet_pos = dic_pos.keys()
+for cle in sujet_pos:
+    print(cle)
+
+mes_neg = "\nAttention, des points négatifs ont été relevés dans certains avis publiés ! Une méthode d'action peut être alors mise en place pour améliorer votre service ou vos produits. les plus récurrents montrent une insatisfaction ou mécontentement liée aux points suivants :"
+print(mes_neg)
+sujet_neg = dic_neg.keys()
+for cle in sujet_neg:
+    print(cle)
 
 """
 plt.pie(proportion, labels=labels, autopct='%1.1f%%', startangle=90)
@@ -356,7 +369,6 @@ plt.ylabel('Niveau de positivité ')
 plt.title('Emotion générale des commentaires')
 plt.legend()
 plt.show()
-"""
 
 
 
@@ -409,7 +421,6 @@ plt.legend(title='Mois', loc='upper right')
 
 plt.show()
 
-
 # Fréquence des avis en fonction des années
 plt.figure(figsize=(12, 6))
 sns.countplot(data=date_df, x='year')
@@ -419,3 +430,4 @@ plt.title('Fréquence des dates par année')
 
 plt.show()
 
+"""
