@@ -358,6 +358,8 @@ plt.legend()
 plt.show()
 """
 
+
+
 #%% Partie analyse des dates
 date_df = liste_com_df['Date']
 date_df = date_df.str.extract(r'le (\d+ \w+ \d{4})')
@@ -387,7 +389,8 @@ print(date_df)
 month_order = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre']
 date_df['month'] = pd.Categorical(date_df['month'], categories=month_order, ordered=True)
 
-# Créer le graphique avec l'échelle des mois triée
+# Créer les graphique avec l'échelle des mois triée
+# Fréquence des avis en fonction des mois 
 plt.figure(figsize=(12, 6))
 sns.countplot(data=date_df, x='month', hue='year')
 plt.xlabel('Mois')
@@ -395,6 +398,7 @@ plt.ylabel('Fréquence')
 plt.title('Fréquence des dates')
 plt.legend(title='Année', loc='upper right')
 
+# Fréquence des avis en fonction des années
 plt.show()
 plt.figure(figsize=(12, 6))
 sns.countplot(data=date_df, x='year', hue='month')
@@ -404,3 +408,14 @@ plt.title('Fréquence des dates')
 plt.legend(title='Mois', loc='upper right')
 
 plt.show()
+
+
+# Fréquence des avis en fonction des années
+plt.figure(figsize=(12, 6))
+sns.countplot(data=date_df, x='year')
+plt.xlabel('Année')
+plt.ylabel('Fréquence')
+plt.title('Fréquence des dates par année')
+
+plt.show()
+
