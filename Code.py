@@ -331,11 +331,23 @@ print("Positif : ",dic_pos)
 print("Negatif : ",dic_neg)
 
 labels = ['Très insatisfait', 'Insatisfait', 'Moyen', 'Satisfait', 'Très satisfait']
-stars=list(liste_com_df['Stars'])
-proportion=[stars.count(1),stars.count(2),stars.count(3),stars.count(4),stars.count(5)]
+stars = list(liste_com_df['Stars'])
+proportion = [stars.count(1), stars.count(2), stars.count(3), stars.count(4), stars.count(5)]
 
+<<<<<<< HEAD
 """
 plt.pie(proportion, labels=labels, autopct='%1.1f%%', startangle=90)
+=======
+# Vérifier les compte de chaque catégorie
+filtered_labels = []
+filtered_proportion = []
+for i in range(len(labels)):
+    if proportion[i] > 0:
+        filtered_labels.append(labels[i])
+        filtered_proportion.append(proportion[i])
+
+plt.pie(filtered_proportion, labels=filtered_labels, autopct='%1.1f%%', startangle=90)
+>>>>>>> 7319dd8fee5b56ceea3bb9662e9e655f04b4c897
 plt.title('Répartition des évaluations')
 plt.show()
 
