@@ -9,6 +9,7 @@ import numpy as np
 from textblob import TextBlob
 from textblob_fr import PatternTagger, PatternAnalyzer
 import matplotlib.pyplot as plt
+import seaborn as sns
 
 #####################################
 ##### PARTIE IMPORTER COMMENTAIRE####
@@ -300,13 +301,13 @@ for com in liste_com_df['Review']:
 
         polarity.append(TextBlob(phrase, pos_tagger=PatternTagger(), analyzer=PatternAnalyzer()).sentiment[0])
 
-        print(phrase)
+        #print(phrase)
 
         #Analyse de la phrase
         dic=chercheemotion(phrase,positif_df,negatif_df,sujet_aborde)
         df=trouve_sujet(dic, phrase, df,positif_df, negatif_df,sujet_aborde,adverbe) # trouver le sujet
 
-    print(df) # resultat pour un commentaire
+    #print(df) # resultat pour un commentaire
 
     #assembler dans un data frame final
     dfinal=pd.concat([dfinal,df])
@@ -333,6 +334,7 @@ labels = ['Très insatisfait', 'Insatisfait', 'Moyen', 'Satisfait', 'Très satis
 stars=list(liste_com_df['Stars'])
 proportion=[stars.count(1),stars.count(2),stars.count(3),stars.count(4),stars.count(5)]
 
+"""
 plt.pie(proportion, labels=labels, autopct='%1.1f%%', startangle=90)
 plt.title('Répartition des évaluations')
 plt.show()
@@ -343,10 +345,51 @@ plt.ylabel('Niveau de positivité ')
 plt.title('Emotion générale des commentaires')
 plt.legend()
 plt.show()
+"""
+
+#%% Partie analyse des dates
+date_df = liste_com_df['Date']
+date_df = date_df.str.extract(r'le (\d+ \w+ \d{4})')
+# Renommer les colonnes
+date_df.columns = ['Date']
+
+# Afficher le df avec toutes les dates
+print(date_df)
+
+date_df['Date'] = date_df['Date'].astype(str)
 
 
+date_df['year'] = ''
+date_df['month'] = ''
+
+# Extraire le mois et l'année à partir de la colonne "Date"
+for index, row in date_df.iterrows():
+    date_parts = row['Date'].split(' ')
+    if len(date_parts) >= 2:
+        row['year'] = date_parts[-1]
+        row['month'] = date_parts[-2]
+
+date_df = date_df.drop(date_df.columns[0], axis=1)
+print(date_df)
 
 
+month_order = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre']
+date_df['month'] = pd.Categorical(date_df['month'], categories=month_order, ordered=True)
 
+# Créer le graphique avec l'échelle des mois triée
+plt.figure(figsize=(12, 6))
+sns.countplot(data=date_df, x='month', hue='year')
+plt.xlabel('Mois')
+plt.ylabel('Fréquence')
+plt.title('Fréquence des dates')
+plt.legend(title='Année', loc='upper right')
 
+plt.show()
+plt.figure(figsize=(12, 6))
+sns.countplot(data=date_df, x='year', hue='month')
+plt.xlabel('Année')
+plt.ylabel('Fréquence')
+plt.title('Fréquence des dates')
+plt.legend(title='Mois', loc='upper right')
 
+plt.show()
