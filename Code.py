@@ -334,10 +334,9 @@ labels = ['Très insatisfait', 'Insatisfait', 'Moyen', 'Satisfait', 'Très satis
 stars = list(liste_com_df['Stars'])
 proportion = [stars.count(1), stars.count(2), stars.count(3), stars.count(4), stars.count(5)]
 
-<<<<<<< HEAD
+
 """
 plt.pie(proportion, labels=labels, autopct='%1.1f%%', startangle=90)
-=======
 # Vérifier les compte de chaque catégorie
 filtered_labels = []
 filtered_proportion = []
