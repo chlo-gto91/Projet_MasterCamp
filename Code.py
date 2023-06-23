@@ -358,7 +358,7 @@ sujet_pos = dic_pos.keys()
 for cle in sujet_pos:
     print(cle)
 
-mes_neg = "\nAttention, des points négatifs ont été relevés dans certains avis publiés ! Une méthode d'action peut être alors mise en place pour améliorer votre service ou vos produits. les plus récurrents montrent une insatisfaction ou mécontentement liée aux points suivants :"
+mes_neg = "\nNéanmoins, des points négatifs ont été relevés dans certains avis publiés ! Une méthode d'action peut être alors mise en place pour améliorer votre service ou vos produits. les plus récurrents montrent une insatisfaction ou mécontentement liée aux points suivants :"
 print(mes_neg)
 sujet_neg = dic_neg.keys()
 for cle in sujet_neg:
