@@ -348,7 +348,7 @@ sujet_neg = dic_neg.keys()
 for cle in sujet_neg:
     print(cle)
 
-"""
+
 plt.pie(proportion, labels=labels, autopct='%1.1f%%', startangle=90)
 # Vérifier les compte de chaque catégorie
 filtered_labels = []
@@ -359,7 +359,7 @@ for i in range(len(labels)):
         filtered_proportion.append(proportion[i])
 
 plt.pie(filtered_proportion, labels=filtered_labels, autopct='%1.1f%%', startangle=90)
->>>>>>> 7319dd8fee5b56ceea3bb9662e9e655f04b4c897
+
 plt.title('Répartition des évaluations')
 plt.show()
 
@@ -430,4 +430,4 @@ plt.title('Fréquence des dates par année')
 
 plt.show()
 
-"""
+
