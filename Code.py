@@ -288,7 +288,7 @@ sujet_aborde = ["site", "haleine", "dent", "internet", "personnel", "livraison",
                 "nettoyage", "poil"]
 
 adverbe = ["peu", "pas", "mais", "sans", "dans", "pour", "plus", "vous", "elle"]
-liste_com_df = pd.read_csv("reviews2.csv")
+liste_com_df = pd.read_csv("reviews-positif-chien1.csv")
 liste_com_df = pd.DataFrame(liste_com_df)
 print(liste_com_df)
 # Dataframe qui contindra emotion et sujet pour tous les commentaires analysé
@@ -350,7 +350,7 @@ dic_neg = trouver_info(data_neg)
 print("Positif : ", dic_pos)
 print("Negatif : ", dic_neg)
 
-# MESSAGE ENTREPRISE
+# MESSAGE ENTREPRISE--ROMAINNNNNNNNNNNN MESSAGEEEEEE POUR SITE  
 print("\nBienvenu dans l'analyse des avis que vos clients ont donné sur votre entreprise et vos produits ! ")
 mes_pos = "\nNous avons recueilli plusieurs avis positifs sur votre site web : les plus récurrents montrent une satisfaction liée aux points suivants :"
 print(mes_pos)
@@ -412,9 +412,21 @@ for index, row in date_df.iterrows():
 date_df = date_df.drop(date_df.columns[0], axis=1)
 print(date_df)
 
-month_order = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre',
-               'novembre', 'décembre']
+month_order_fr = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre']
+month_order_en = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+
+# Vérifier la langue des mots dans la colonne "month"
+is_english = any(date_df['month'].str.contains('|'.join(month_order_en)))
+
+# Utiliser la liste de mois appropriée
+if is_english:
+    month_order = month_order_en
+else:
+    month_order = month_order_fr
+
+
 date_df['month'] = pd.Categorical(date_df['month'], categories=month_order, ordered=True)
+
 
 # Créer les graphique avec l'échelle des mois triée
 # Fréquence des avis en fonction des mois
