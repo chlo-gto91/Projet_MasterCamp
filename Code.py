@@ -330,10 +330,6 @@ dic_neg=trouver_info(data_neg)
 print("Positif : ",dic_pos)
 print("Negatif : ",dic_neg)
 
-labels = ['Très insatisfait', 'Insatisfait', 'Moyen', 'Satisfait', 'Très satisfait']
-stars = list(liste_com_df['Stars'])
-proportion = [stars.count(1), stars.count(2), stars.count(3), stars.count(4), stars.count(5)]
-
 #MESSAGE ENTREPRISE 
 print("\nBienvenu dans l'analyse des avis que vos clients ont donné sur votre entreprise et vos produits ! ")
 mes_pos = "\nNous avons recueilli plusieurs avis positifs sur votre site web : les plus récurrents montrent une satisfaction liée aux points suivants :"
@@ -348,9 +344,11 @@ sujet_neg = dic_neg.keys()
 for cle in sujet_neg:
     print(cle)
 
+labels = ['Très insatisfait', 'Insatisfait', 'Moyen', 'Satisfait', 'Très satisfait']
+stars = list(liste_com_df['Stars'])
+proportion = [stars.count(1), stars.count(2), stars.count(3), stars.count(4), stars.count(5)]
 
-plt.pie(proportion, labels=labels, autopct='%1.1f%%', startangle=90)
-# Vérifier les compte de chaque catégorie
+# Vérifier les comptes de chaque catégorie et les filtrer
 filtered_labels = []
 filtered_proportion = []
 for i in range(len(labels)):
@@ -358,8 +356,8 @@ for i in range(len(labels)):
         filtered_labels.append(labels[i])
         filtered_proportion.append(proportion[i])
 
+# Créer le graphique circulaire avec les données filtrées
 plt.pie(filtered_proportion, labels=filtered_labels, autopct='%1.1f%%', startangle=90)
-
 plt.title('Répartition des évaluations')
 plt.show()
 
@@ -369,7 +367,6 @@ plt.ylabel('Niveau de positivité ')
 plt.title('Emotion générale des commentaires')
 plt.legend()
 plt.show()
-
 
 
 #%% Partie analyse des dates
