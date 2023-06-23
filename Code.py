@@ -11,9 +11,11 @@ from textblob_fr import PatternTagger, PatternAnalyzer
 import matplotlib.pyplot as plt
 import seaborn as sns
 
+
 #####################################
 ##### PARTIE IMPORTER COMMENTAIRE####
 ####################################
+
 
 # a mettre ici
 
@@ -22,7 +24,9 @@ import seaborn as sns
 ##### PARTIE ANALYSE PHRASE #########
 ####################################
 
+
 #### initialisation commentaire ####
+
 
 # separer le commentaire complet par chaque phrase
 def segmenter_phrases(commentaire):
@@ -38,25 +42,29 @@ def segmenter_phrases(commentaire):
         phrases.append(phrase.strip())  # Ajouter la dernière phrase si elle existe
     return phrases
 
-#Permet de simplifier les phrases
+
+# Permet de simplifier les phrases
 def enleverpetitmot(phrase):
-    words=phrase.split()
-    phrase_simple=""
+    words = phrase.split()
+    phrase_simple = ""
     for word in words:
-        if len(word)>3 or word=="pas" or word=="peu" or word=="bon":
-            phrase_simple=phrase_simple+" "+word
+        if len(word) > 3 or word == "pas" or word == "peu" or word == "bon":
+            phrase_simple = phrase_simple + " " + word
     return phrase_simple
 
-#enlève point et virgule
+
+# enlève point et virgule
 def enlever_ponctuation(phrase):
     ponctuation = string.punctuation
     phrase_sans_ponctuation = "".join(caractere for caractere in phrase if caractere not in ponctuation)
     return phrase_sans_ponctuation
 
+
 #### Recherche sujet ####
 
-#Verifier si vrai negatif et vrai positif
-def verif_neg(com_mot,pos):
+
+# Verifier si vrai negatif et vrai positif
+def verif_neg(com_mot, pos):
     debut = pos - 2
 
     if debut < 0:
@@ -67,71 +75,74 @@ def verif_neg(com_mot,pos):
     if fin > len(com_mot):
         fin = len(com_mot)
 
-    for i in range(debut,fin):
-        if com_mot[i]=='pas'or com_mot[i]=='jamais'or com_mot[i]=='rien':
+    for i in range(debut, fin):
+        if com_mot[i] == 'pas' or com_mot[i] == 'jamais' or com_mot[i] == 'rien':
             return True
     return False
 
-#verifier si c'est le même mot suivant orthographe
-def detecter_emotion_ecart_mot(mot,df):
 
+# verifier si c'est le même mot suivant orthographe
+def detecter_emotion_ecart_mot(mot, df):
     for mot_test in df:
-        if mot_test==mot:
+        if mot_test == mot:
             return True
         else:
-            distance = Levenshtein.distance(mot_test,mot)
+            distance = Levenshtein.distance(mot_test, mot)
             if distance <= 1:  # La distance maximale autorisée
                 return True
 
     return False
 
-#cherche emotion par rapport au dataframe et au commentaire
-def chercheemotion(com, positif_df, negatif_df,sujet_aborde):
+
+# cherche emotion par rapport au dataframe et au commentaire
+def chercheemotion(com, positif_df, negatif_df, sujet_aborde):
     dic = {}
     com_mot = com.split()
     for i in range(len(com_mot)):
-        if detecter_emotion_ecart_mot(com_mot[i],positif_df.values[:,0]):
+        if detecter_emotion_ecart_mot(com_mot[i], positif_df.values[:, 0]):
             if com_mot[i] != 'pas' and com_mot[i] != 'jamais' and com_mot[i] != 'rien':
                 if com_mot[i] not in sujet_aborde:
                     if verif_neg(com_mot, i):
                         dic[com_mot[i]] = ["N", i]
-                    else :
+                    else:
                         dic[com_mot[i]] = ["P", i]
-        elif detecter_emotion_ecart_mot(com_mot[i],negatif_df.values[:,0]):
+        elif detecter_emotion_ecart_mot(com_mot[i], negatif_df.values[:, 0]):
             if com_mot[i] != 'pas' and com_mot[i] != 'jamais' and com_mot[i] != 'rien':
                 if com_mot[i] not in sujet_aborde:
                     if verif_neg(com_mot, i):
                         dic[com_mot[i]] = ["P", i]
-                    else :
+                    else:
                         dic[com_mot[i]] = ["N", i]
     return dic
 
+
 ###### Recherche emotion ########
 
-# regarder si le mot dans la liste à 2 lettres d'erreur considèrer comme identitique
-def detecter_sujet_ecart_mot(mot,df):
 
+# regarder si le mot dans la liste à 2 lettres d'erreur considèrer comme identitique
+def detecter_sujet_ecart_mot(mot, df):
     for mot_test in df:
-        if mot_test==mot:
-            distance = Levenshtein.distance(mot_test,mot)
+        if mot_test == mot:
+            distance = Levenshtein.distance(mot_test, mot)
             if distance <= 1:  # La distance maximale autorisée
                 return True
 
     return False
 
-#si même phrase d'un sujet avant alors même sujet pour cette émotion
-def verif_avant(com,df):
-    if len(df)!=0:
-        avant=df.iloc[-1]
+
+# si même phrase d'un sujet avant alors même sujet pour cette émotion
+def verif_avant(com, df):
+    if len(df) != 0:
+        avant = df.iloc[-1]
         if avant["Sujet"] in com:
             return avant["Sujet"]
         return "GENERAL"
-    else :
+    else:
         return "GENERAL"
 
-# associe à chaque emotion le sujet
-def trouve_sujet(dic,com,df,positif_df, negatif_df,sujet_aborde,adverbe):
 
+# associe à chaque emotion le sujet
+def trouve_sujet(dic, com, df, positif_df, negatif_df, sujet_aborde, adverbe):
     com_mot = com.split()
     for key in dic.keys():
         pos = dic[key][1]
@@ -140,31 +151,31 @@ def trouve_sujet(dic,com,df,positif_df, negatif_df,sujet_aborde,adverbe):
         if debut < 0:
             debut = 0
 
-        fin = pos +2
+        fin = pos + 2
 
         if fin > len(com_mot):
             fin = len(com_mot)
 
         emo = ""
         for i in range(debut, fin):
-            if detecter_sujet_ecart_mot(com_mot[i],sujet_aborde):
-                if com_mot[i] not in positif_df.values and com_mot[i] not in negatif_df.values :
-                    if com_mot[i]!=key and com_mot[i] not in adverbe:
-                        if len(emo)==0:
+            if detecter_sujet_ecart_mot(com_mot[i], sujet_aborde):
+                if com_mot[i] not in positif_df.values and com_mot[i] not in negatif_df.values:
+                    if com_mot[i] != key and com_mot[i] not in adverbe:
+                        if len(emo) == 0:
                             emo = com_mot[i]
-                        else :
+                        else:
                             emo = emo + " " + com_mot[i]
 
-        if len(emo)==0:
+        if len(emo) == 0:
 
-            emo=verif_avant(com, df) # si n'a pas trouver le sujet
-            x=1
-            while emo=="GENERAL" and pos+x<len(com_mot):
-                j=pos+x
-                if com_mot[j] not in positif_df.values and com_mot[j] not in negatif_df.values :
-                    if com_mot[j]!=key and com_mot[j] not in adverbe:
-                        emo=com_mot[j]
-                x+=1
+            emo = verif_avant(com, df)  # si n'a pas trouver le sujet
+            x = 1
+            while emo == "GENERAL" and pos + x < len(com_mot):
+                j = pos + x
+                if com_mot[j] not in positif_df.values and com_mot[j] not in negatif_df.values:
+                    if com_mot[j] != key and com_mot[j] not in adverbe:
+                        emo = com_mot[j]
+                x += 1
         new_row = pd.DataFrame({
             "Emotion": [key],
             "Sujet": [emo],
@@ -175,11 +186,14 @@ def trouve_sujet(dic,com,df,positif_df, negatif_df,sujet_aborde,adverbe):
 
     return df
 
+
 #####################################
 ##### PARTIE REGRESSION ############
 ####################################
 
+
 ####    A FAIRE      ###########
+
 
 #####################################
 ##### PARTIE ANALYSE COM ############
@@ -195,9 +209,9 @@ def split_sujet(df):
             emo = row['Emotion']
 
             for mot in mots:
-                new_row = {'Emotion': emo, 'Sujet': mot,'P/N': row['P/N']}
+                new_row = {'Emotion': emo, 'Sujet': mot, 'P/N': row['P/N']}
                 rows_to_append.append(new_row)
-            df=df.drop(index)
+            df = df.drop(index)
     # Append the new rows to the DataFrame
     if rows_to_append:
         new_rows_df = pd.DataFrame(rows_to_append)
@@ -205,15 +219,16 @@ def split_sujet(df):
 
     return df
 
+
 def enlever_doublons(sujets_counts):
-    notin=[]
-    conteur=[]
-    index=[]
+    notin = []
+    conteur = []
+    index = []
     for val in range(len(sujets_counts)):
         if val not in notin:
             conteur.append(sujets_counts[val])
             index.append(sujets_counts.index[val])
-            for i in range (val+1,len(sujets_counts)):
+            for i in range(val + 1, len(sujets_counts)):
                 if i not in notin:
                     distance = Levenshtein.distance(sujets_counts.index[val], sujets_counts.index[i])
                     if distance <= 1:  # La distance maximale autorisée
@@ -221,35 +236,38 @@ def enlever_doublons(sujets_counts):
                         notin.append(i)
                         conteur[ind] = conteur[ind] + sujets_counts[i]
 
+    con = np.array(conteur)
 
-    con=np.array(conteur)
-
-    s=pd.Series(con , index=index)
+    s = pd.Series(con, index=index)
     return s
 
-def mot_majeur(liste,x):
+
+def mot_majeur(liste, x):
     sujets_counts = liste.value_counts()
-    s=enlever_doublons(sujets_counts)
+    s = enlever_doublons(sujets_counts)
     # Obtenez le sujet qui apparaît le plus fréquemment (le premier élément de la série sujets_counts)
     sujet_plus_frequent = s.index[0:x]
 
     return sujet_plus_frequent
 
-def emotion_majeur(sujet_frequent,data):
-    dic={}
+
+def emotion_majeur(sujet_frequent, data):
+    dic = {}
     for sujet in sujet_frequent:
         df_sujet = data.loc[data['Sujet'] == sujet]
-        mot_frequent = mot_majeur(df_sujet['Emotion'],2)
-        dic[sujet]=mot_frequent
+        mot_frequent = mot_majeur(df_sujet['Emotion'], 2)
+        dic[sujet] = mot_frequent
     return dic
+
 
 def trouver_info(data):
     data_pos = split_sujet(data)
     x = int(len(data_pos) * 0.05)
-    sujet_frequent_pos = mot_majeur(data_pos['Sujet'],3)
-    dic=emotion_majeur(sujet_frequent_pos, data)
+    sujet_frequent_pos = mot_majeur(data_pos['Sujet'], 3)
+    dic = emotion_majeur(sujet_frequent_pos, data)
 
     return dic
+
 
 #####################################
 ##### PROGRAMME PRINCIPALE ##########
@@ -258,79 +276,81 @@ def trouver_info(data):
 
 # Nos données : sujet et emotion
 positif_df = pd.read_csv("positif_df.csv")
-positif_df=pd.DataFrame(positif_df)
+positif_df = pd.DataFrame(positif_df)
 negatif_df = pd.read_csv("negatif_df.csv")
-negatif_df=pd.DataFrame(negatif_df)
-sujet_aborde = ["site", "haleine","dent","internet", "personnel", "livraison", "marque", "delai", "esthetique",
-                    "collection", "materiel", "prix", "etablissement", "matiere", "taille", "politesse", "cashback",
-                    "produit", "commande", "service", "client", "vetement", "qualite", "regler", "renvoi", "image", 
-                    "roman", "histoire", "tissus", "pads", "utilite", "achat", "design","couleurs","brosse", "utilisation", 
-                    "solide", "solidite", "appareil", "clips", "article", "coutures", "toile", "plastique", "housse", "nettoyage", "poil"]
+negatif_df = pd.DataFrame(negatif_df)
+sujet_aborde = ["site", "haleine", "dent", "internet", "personnel", "livraison", "marque", "delai", "esthetique",
+                "collection", "materiel", "prix", "etablissement", "matiere", "taille", "politesse", "cashback",
+                "produit", "commande", "service", "client", "vetement", "qualite", "regler", "renvoi", "image",
+                "roman", "histoire", "tissus", "pads", "utilite", "achat", "design", "couleurs", "brosse",
+                "utilisation",
+                "solide", "solidite", "appareil", "clips", "article", "coutures", "toile", "plastique", "housse",
+                "nettoyage", "poil"]
 
-adverbe=["peu", "pas","mais","sans","dans","pour","plus","vous","elle"]
-liste_com_df=pd.read_csv("reviews2.csv")
-liste_com_df=pd.DataFrame(liste_com_df)
+adverbe = ["peu", "pas", "mais", "sans", "dans", "pour", "plus", "vous", "elle"]
+liste_com_df = pd.read_csv("reviews2.csv")
+liste_com_df = pd.DataFrame(liste_com_df)
 print(liste_com_df)
-#Dataframe qui contindra emotion et sujet pour tous les commentaires analysé
-dfinal= pd.DataFrame({
-        "Emotion": [],
-        "Sujet": [],
-        "P/N": [] # changer derniere colonne par coef ou ajouter colonne avec
-    })
+# Dataframe qui contindra emotion et sujet pour tous les commentaires analysé
+dfinal = pd.DataFrame({
+    "Emotion": [],
+    "Sujet": [],
+    "P/N": []  # changer derniere colonne par coef ou ajouter colonne avec
+})
 polarity = []
 for com in liste_com_df['Review']:
     phrases_separees = segmenter_phrases(com)
 
-    #initialisation du dataframes pour chaque com
+    # initialisation du dataframes pour chaque com
     df = pd.DataFrame({
-            "Emotion": [],
-            "Sujet": [],
-            "P/N": []
-        })
+        "Emotion": [],
+        "Sujet": [],
+        "P/N": []
+    })
 
     for phrase in phrases_separees:
-
         polarity.append(TextBlob(phrase, pos_tagger=PatternTagger(), analyzer=PatternAnalyzer()).sentiment[0])
 
-        #Permet de simplifier le message pour annalyse
+        # Permet de simplifier le message pour annalyse
         texte_modifie = phrase.replace("'", " ")
         phrase_sans_ponctuation = enlever_ponctuation(texte_modifie)
         texte_sans_accents = unidecode.unidecode(phrase_sans_ponctuation)
         phrase = texte_sans_accents.lower()
-        phrase = enleverpetitmot(phrase )
+        phrase = enleverpetitmot(phrase)
 
         polarity.append(TextBlob(phrase, pos_tagger=PatternTagger(), analyzer=PatternAnalyzer()).sentiment[0])
 
-        #print(phrase)
+        # print(phrase)
 
-        #Analyse de la phrase
-        dic=chercheemotion(phrase,positif_df,negatif_df,sujet_aborde)
-        df=trouve_sujet(dic, phrase, df,positif_df, negatif_df,sujet_aborde,adverbe) # trouver le sujet
+        # Analyse de la phrase
+        dic = chercheemotion(phrase, positif_df, negatif_df, sujet_aborde)
+        df = trouve_sujet(dic, phrase, df, positif_df, negatif_df, sujet_aborde, adverbe)  # trouver le sujet
 
-    #print(df) # resultat pour un commentaire
+    # print(df) # resultat pour un commentaire
 
-    #assembler dans un data frame final
-    dfinal=pd.concat([dfinal,df])
+    # assembler dans un data frame final
+    dfinal = pd.concat([dfinal, df])
 
-# mettre proprement dataframe final avec les indexs 
-dfinal=dfinal.reset_index()
+# mettre proprement dataframe final avec les indexs
+dfinal = dfinal.reset_index()
 dfinal = dfinal.drop('index', axis=1)
 
-#print(dfinal) # résultat de tous les commentaires
+# print(dfinal) # résultat de tous les commentaires
 
-#séparer le dataframe entre P et N 
+
+# séparer le dataframe entre P et N
+
 
 data_pos = dfinal.loc[dfinal['P/N'] == 'P']
 data_neg = dfinal.loc[dfinal['P/N'] == 'N']
 
+dic_pos = trouver_info(data_pos)
+dic_neg = trouver_info(data_neg)
 
-dic_pos=trouver_info(data_pos)
-dic_neg=trouver_info(data_neg)
+print("Positif : ", dic_pos)
+print("Negatif : ", dic_neg)
 
-print("Positif : ",dic_pos)
-print("Negatif : ",dic_neg)
-
-#MESSAGE ENTREPRISE 
+# MESSAGE ENTREPRISE
 print("\nBienvenu dans l'analyse des avis que vos clients ont donné sur votre entreprise et vos produits ! ")
 mes_pos = "\nNous avons recueilli plusieurs avis positifs sur votre site web : les plus récurrents montrent une satisfaction liée aux points suivants :"
 print(mes_pos)
@@ -368,8 +388,7 @@ plt.title('Emotion générale des commentaires')
 plt.legend()
 plt.show()
 
-
-#%% Partie analyse des dates
+# %% Partie analyse des dates
 date_df = liste_com_df['Date']
 date_df = date_df.str.extract(r'le (\d+ \w+ \d{4})')
 # Renommer les colonnes
@@ -379,7 +398,6 @@ date_df.columns = ['Date']
 print(date_df)
 
 date_df['Date'] = date_df['Date'].astype(str)
-
 
 date_df['year'] = ''
 date_df['month'] = ''
@@ -394,12 +412,12 @@ for index, row in date_df.iterrows():
 date_df = date_df.drop(date_df.columns[0], axis=1)
 print(date_df)
 
-
-month_order = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre']
+month_order = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre',
+               'novembre', 'décembre']
 date_df['month'] = pd.Categorical(date_df['month'], categories=month_order, ordered=True)
 
 # Créer les graphique avec l'échelle des mois triée
-# Fréquence des avis en fonction des mois 
+# Fréquence des avis en fonction des mois
 plt.figure(figsize=(12, 6))
 sns.countplot(data=date_df, x='month', hue='year')
 plt.xlabel('Mois')
