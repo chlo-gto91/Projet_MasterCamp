@@ -387,7 +387,7 @@ plt.ylabel('Niveau de positivité ')
 plt.title('Emotion générale des commentaires')
 plt.legend()
 plt.show()
-"""
+
 # %% Partie analyse des dates
 date_df = liste_com_df['Date']
 date_df = date_df.str.extract(r'le (\d+ \w+ \d{4})')
@@ -429,14 +429,6 @@ date_df['month'] = pd.Categorical(date_df['month'], categories=month_order, orde
 
 
 # Créer les graphique avec l'échelle des mois triée
-# Fréquence des avis en fonction des mois
-plt.figure(figsize=(12, 6))
-sns.countplot(data=date_df, x='month', hue='year')
-plt.xlabel('Mois')
-plt.ylabel('Fréquence')
-plt.title('Fréquence des dates')
-plt.legend(title='Année', loc='upper right')
-
 # Fréquence des avis en fonction des années
 plt.show()
 plt.figure(figsize=(12, 6))
@@ -448,13 +440,5 @@ plt.legend(title='Mois', loc='upper right')
 
 plt.show()
 
-# Fréquence des avis en fonction des années
-plt.figure(figsize=(12, 6))
-sns.countplot(data=date_df, x='year')
-plt.xlabel('Année')
-plt.ylabel('Fréquence')
-plt.title('Fréquence des dates par année')
 
-plt.show()
-"""
 
