@@ -387,7 +387,7 @@ plt.ylabel('Niveau de positivité ')
 plt.title('Emotion générale des commentaires')
 plt.legend()
 plt.show()
-
+"""
 # %% Partie analyse des dates
 date_df = liste_com_df['Date']
 date_df = date_df.str.extract(r'le (\d+ \w+ \d{4})')
@@ -456,5 +456,5 @@ plt.ylabel('Fréquence')
 plt.title('Fréquence des dates par année')
 
 plt.show()
-
+"""
 
